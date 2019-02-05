@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+.env
+yarn.lock
+!package.json
+downloads/*
+uploads/*
+processed/*
+package-lock.json
+!downloads/.keep
+!uploads/.keep
+!processed/.keep
+!app/**/*.json

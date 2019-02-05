@@ -1,0 +1,19 @@
+{
+    "ERR001":" field is required",
+    "ERR002":"Value is too small, required length is {val}",
+    "ERR003":"Value is to large, required maximum length is {val}",
+    "ERR004":"Field must be type of {type}",
+    "ERR005":"Something went wrong",
+    "ERR006":"List of poject not received",
+    "ERR007":"Authorization Error",
+    "ERR008":"Item exist",
+    "ERR009":"Error deleting",
+    "ERR010":"Error find to DB",
+    "ERR011":"Not enough rights",
+    "ERR012":"Item does not exist",
+    "ERR013":"Incorrect value",
+    "ERR014":"Error save to DB",
+    "ERR500":"Internal server error",
+    "ERR404":"Resource not found",
+    "ERR401":"Unauthorized"
+}  

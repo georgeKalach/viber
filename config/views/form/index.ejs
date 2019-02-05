@@ -1,0 +1,50 @@
+
+
+<link rel="stylesheet" href="./style.scss">
+  <div class="form-header">
+    <h3>Login</h3>
+  </div>
+  <form name="registerForm" class="form-login"  method="post" action="/registr" novalidate>
+    <!-- <div class="form-field">
+        <label for="name">Name</label>
+        <input class="input" id="name" name="name" type="name" value="" />
+    </div>
+    <div class="form-field">
+      <label for="email">Email</label>
+      <input class="input" id="email" name="email" type="email" value="" />
+    </div> -->
+    <div class="form-field">
+        <label for="phone">Phone</label>
+        <input class="input" id="phone" name="phone" type="phone" value="" />
+    </div>
+    <div class="form-field">
+        <label for="password">Password</label>
+        <input class="input" id="password" name="password" type="password" value="" />
+    </div>
+    <div class="form-actions">
+      <button class="btn" type="submit">Send</button>
+    </div>
+  </form>
+
+  <script>
+ 
+    document.getElementById("submit").addEventListener("click", function (e) {
+         e.preventDefault();
+        // получаем данные формы
+        let registerForm = document.forms["registerForm"];
+        let phone = registerForm.elements["phone"].value;
+        let password = registerForm.elements["password"].value;
+        // сериализуем данные в json
+        let user = JSON.stringify({name: "name", email: "proffesssor@mail.ru", phone: phone, password: password});
+        let request = new XMLHttpRequest();
+        // посылаем запрос на адрес "/user"
+         request.open("POST", "/registr", true);   
+         request.setRequestHeader("Content-Type", "application/json");
+         request.addEventListener("load", function () {
+
+          var token = request.getResponseHeader('token');
+          localStorage.setItem("token", token);
+         });
+         request.send(user);
+     });
+</script>

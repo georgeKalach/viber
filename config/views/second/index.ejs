@@ -1,0 +1,98 @@
+<!-- /project_dir/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./css/main.css">
+    <meta name="robots" content="noindex,nofollow"/>
+    <title>virtual chat</title>
+</head>
+<body>
+<div class="demo">
+    <h1>virtual chat</h1>
+ 
+    <div class="chat">
+        <div class="messages" id="messages"></div>
+ 
+        <div class="panel">
+            <span class="nick"></span>
+            <input type="text" name="message_text" id="message_text">
+            <button type="button" id="message_btn">Отправить</button>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+<!-- <script src="/socket.io/socket.io.js"></script> -->
+<script type="text/javascript"> 
+ // javascript code
+ $(document).ready(function () {
+        // var socket = io();
+        var name = 'Пётр_' + (Math.round(Math.random() * 10000));
+        var messages = $("#messages");
+        var message_txt = $("#message_text")
+        var socketId;
+        $('.chat .nick').text(name);
+
+     var ws = new WebSocket('ws://localhost:3000');
+     $("#message_btn").click(function () {
+            var text = $("#message_text").val();
+            if (text.length <= 0)
+                return;
+            message_txt.val("");
+            ws.send(JSON.stringify({message: text, name: name}));
+        });
+
+        ws.onmessage = (msg) => {
+            var message = JSON.parse(msg.data);
+            msg1(message.name,  message.message);
+            message_txt.focus();
+        }
+
+        function msg1(nick, message) {
+            var m = '<div class="msg">' +
+                    '<span class="user">' + safe(nick) + ':</span> '
+                    + safe(message) + '</br>'// + id
+                    '</div>';
+            messages
+                    .append(m)
+                    .scrollTop(messages[0].scrollHeight);
+        }
+ 
+        function msg_system(message) {
+            var m = '<div class="msg system">' + safe(message) + '</div>';
+            messages
+                    .append(m)
+                    .scrollTop(messages[0].scrollHeight);
+        }
+ 
+        // socket.on('connecting', function () {
+        //     msg_system('Соединение...');
+        // });
+ 
+        // socket.on('connect', function () {
+        //     socketId = socket.id;
+        //     msg_system('Соединение установлено!');
+        // });
+ 
+        // socket.on('message', function (data) {
+        //     msg(data.name, data.message, data.id);
+        //     message_txt.focus();
+        // });
+ 
+        // $("#message_btn").click(function () {
+        //     var text = $("#message_text").val();
+        //     if (text.length <= 0)
+        //         return;
+        //     message_txt.val("");
+        //     socket.emit("message", {message: text, name: name, id: socketId});
+        // });
+ 
+        function safe(str) {
+            return str.replace(/&/g, '&amp;')
+               .replace(/</g, '&lt;')
+               .replace(/>/g, '&gt;');
+        }
+    });
+</script>
+</body>
+</html>
