@@ -16,16 +16,18 @@ const fs = require('fs');
 module.exports = function (app, passport) {
 
 	app.get('/', function(req, res){
-		res.render('form')
+		res.render('login')
 	});
-	app.get('/second',  function(req, res){
-		res.render('./second')
+	app.get('/signup', function(req, res){
+		res.render('signup')
+	});
+	app.get('/chat',  function(req, res){
+
+		res.render('./chat')
 	});
 
 	app.post('/registr', users.registr);
 	app.post('/login', users.login);
-	
-
 	app.delete('/user/delete/', passport.authenticate('jwt', {session : false}), users.deleteUser);
 	app.post('/user/update/', passport.authenticate('jwt', {session : false}), users.updateUser);
 	app.get('/user/get/', passport.authenticate('jwt', {session : false}), users.getUser);

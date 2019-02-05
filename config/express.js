@@ -30,7 +30,7 @@ var env = process.env.NODE_ENV || 'development';
 
 module.exports = function (app, passport) {
 
-  app.set('views', join(__dirname.replace('config', 'app/controllers'), 'views'))
+  app.set('views', join(__dirname.replace('config', 'public'), 'views'))
   app.set('view engine', 'ejs')
 
   app.use(cors({

@@ -5,6 +5,7 @@
 
 module.exports = {
   db: 'mongodb://localhost/testdb',
+  wss: 'ws://localhost:3000',
   facebook: {
     clientID: 'APP_ID',
     clientSecret: 'SECRET',

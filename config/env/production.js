@@ -5,6 +5,7 @@
 
 module.exports = {
   db: 'mongodb://heroku_1b2m3wbk:sa0iqijashe2qn541rt77k4lrp@ds237932.mlab.com:37932/heroku_1b2m3wbk',
+  wss: 'wss://damp-tundra-61257.herokuapp.com/',
   facebook: {
     clientID: 'APP_ID',
     clientSecret: 'SECRET',

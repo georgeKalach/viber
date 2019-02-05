@@ -27,13 +27,13 @@
  // javascript code
  $(document).ready(function () {
         // var socket = io();
-        var name = 'Пётр_' + (Math.round(Math.random() * 10000));
+        var name = 'User_' + (Math.round(Math.random() * 10000));
         var messages = $("#messages");
         var message_txt = $("#message_text")
         var socketId;
         $('.chat .nick').text(name);
 
-     var ws = new WebSocket('ws://damp-tundra-61257.herokuapp.com/');
+     var ws = new WebSocket('ws://localhost:3000');
      $("#message_btn").click(function () {
             var text = $("#message_text").val();
             if (text.length <= 0)

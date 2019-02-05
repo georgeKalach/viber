@@ -33,7 +33,7 @@ module.exports.registr = function(req, res){
                 if(err) return res.sendError('ERR007');
                 const token = jwt.sign({id : user._id}, 'very_big_secret_key');
                 res.setHeader('token', token)
-                return res.redirect('./second');
+                return res.sendData(user);
             });
         });
     })

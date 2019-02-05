@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./css/login.css">
+    <meta name="robots" content="noindex,nofollow"/>
+    <title>virtual chat</title>
+</head>
+<body>
+  <div class="form-header">
+    <h3>Login</h3>
+  </div>
+  <div class="conteinerForm">
+    <form name="loginForm" class="form-login"  method="post" action="/registr" novalidate>
+      <div class="form-field">
+          <label class="label" for="phone">Phone</label>
+          <input class="input" id="phone" name="phone" type="phone" value="" />
+      </div>
+      <div class="form-field">
+          <label class="label" for="password">Password</label>
+          <input class="input" id="password" name="password" type="password" value="" />
+      </div>
+      <div class="form-actions">
+        <button id="btn-login" class="btn" type="submit">Sign in</button>
+        <button id="btn-reg" class="btn" type="submit">Sign up</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+ 
+    document.getElementById("btn-login").addEventListener("click", function (e) {
+         e.preventDefault();
+        // получаем данные формы
+        let loginForm = document.forms["loginForm"];
+        let phone = loginForm.elements["phone"].value;
+        let password = loginForm.elements["password"].value;
+        // сериализуем данные в json
+        let user = JSON.stringify({phone: phone, password: password});
+        let request = new XMLHttpRequest();
+        // посылаем запрос на адрес "/user"
+         request.open("POST", "/login", true);   
+         request.setRequestHeader("Content-Type", "application/json");
+         request.addEventListener("load", function () {
+
+          if(request.status < 400){
+            var token = request.getResponseHeader('token');
+            console.log('///////////////////////');
+            
+            localStorage.setItem("token", token);
+            request.open("GET", "/chat", true);   
+            request.setRequestHeader('Authorization', 'Bearer ' + token);
+            request.setRequestHeader("Content-Type", "application/json");
+            request.send();
+            //window.location.href = "/chat";
+          }
+          if(request.status >= 400){
+            window.location.href = "/signup";
+          }
+         });
+         request.send(user);
+     });
+
+     document.getElementById("btn-reg").addEventListener("click", function (e) {
+         e.preventDefault();
+         window.location.href = "/signup";
+     })
+</script>
+</body>
+</html>
