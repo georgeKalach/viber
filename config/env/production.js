@@ -4,7 +4,7 @@
  */
 
 module.exports = {
-  db: 'mongodb://localhost:27017/proddb',
+  db: 'mongodb://heroku_1b2m3wbk:sa0iqijashe2qn541rt77k4lrp@ds237932.mlab.com:37932/heroku_1b2m3wbk',
   facebook: {
     clientID: 'APP_ID',
     clientSecret: 'SECRET',
