@@ -75,7 +75,7 @@ const TextMessage = require('viber-bot').Message.Text;
   const bot = new ViberBot(logger, {
     authToken: "492dd39cdd67d7e9-8183cf8aa72f5f83-4b9561e01920061f", 
     name: "Viber bot",  
-    avatar: "http://api.adorable.io/avatar/200/isitup" 
+    avatar: "http://viber.com/avatar.jpg" 
 });
 app.use(bot.middleware());
 
