@@ -75,7 +75,7 @@ const logger = createLogger();
 app.use(bot.middleware());
 
 const TextMessage = require('viber-bot').Message.Text;
-bot.onSubscribe(response => bot.sendMessage(rsponse.userProfile, new TextMessage('Hello ' + rsponse.userProfile.name)));
+bot.onSubscribe(response => bot.sendMessage(response.userProfile, new TextMessage('Hello ' + response.userProfile.name)));
 
 function listen () {
   if (app.get('env') === 'test') return;
