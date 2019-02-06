@@ -21,7 +21,6 @@ const passport = require('passport');
 const config = require('./config');
 //const util = require('./app/controllers/Util');
 const constants = require('./config/constants');
-
 var usersModel = require('./app/models/user');
 const models = join(__dirname, 'app/models');
 const port = process.env.PORT || 3000;
