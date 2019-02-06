@@ -21,7 +21,7 @@ const passport = require('passport');
 const config = require('./config');
 //const util = require('./app/controllers/Util');
 const constants = require('./config/constants');
-//var usersModel = require('./app/models/user');
+var usersModel = require('./app/models/user');
 const models = join(__dirname, 'app/models');
 const port = process.env.PORT || 3000;
 
@@ -59,6 +59,15 @@ connection
 const toYAML = require('winston-console-formatter');
 const { formatter, timestamp } = toYAML();
 
+function createLogger() {
+  const logger = new winston.Logger({
+      level: "debug" // We recommend using the debug level for development
+  });
+  logger.add(winston.transports.Console, {formatter, timestamp});
+  return logger;
+}
+const logger = createLogger();
+
 const ViberBot  = require('viber-bot').Bot;
 const BotEvents = require('viber-bot').Events;
 const TextMessage = require('viber-bot').Message.Text;
@@ -71,13 +80,13 @@ const TextMessage = require('viber-bot').Message.Text;
 app.use(bot.middleware());
 
 bot.onSubscribe(response => {
-  // var user = {
-  //   name: response.userProfile.name,
-  //   phone: response.userProfile.id,
-  // }
-  // usersModel.save(user, function(err){
-  //   if(err)console.log(err);
-  // })
+  var user = {
+    name: response.userProfile.name,
+    phone: response.userProfile.id,
+  }
+  usersModel.save(user, function(err){
+    if(err)console.log(err);
+  })
   bot.sendMessage(response.userProfile, new TextMessage('Hello ' + response.userProfile.name))
 });
 bot.onUnsubscribe(userId => console.log(`Unsubscribed: ${userId}`));
@@ -133,14 +142,7 @@ function listen () {
 }  
 
 
-function createLogger() {
-  const logger = new winston.Logger({
-      level: "debug" // We recommend using the debug level for development
-  });
-  logger.add(winston.transports.Console, {formatter, timestamp});
-  return logger;
-}
-const logger = createLogger();
+
 
 function connect () {
   var options = { poolSize:20,useMongoClient: true };
