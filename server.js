@@ -78,7 +78,7 @@ const TextMessage = require('viber-bot').Message.Text;
     avatar: "" 
 });
 
-//app.use(bot.middleware());
+app.use(bot.middleware());
 
 // bot.onSubscribe(response => {
 //   console.log(' 00000000000000000000000000 subscribe 00000000000000000000000000');
@@ -108,7 +108,7 @@ bot.on(BotEvents.SUBSCRIBED,  response => {
 
 function listen () {
   if (app.get('env') === 'test') return;
-  var server = app.listen(port, bot.middleware(), () => bot.setWebhook('https://damp-tundra-61257.herokuapp.com/'));
+  var server = app.listen(port, () => bot.setWebhook('https://damp-tundra-61257.herokuapp.com/'));
   
   var ws = require('ws')
     var clients = {};
