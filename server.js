@@ -22,6 +22,7 @@ const config = require('./config');
 //const util = require('./app/controllers/Util');
 const constants = require('./config/constants');
 
+var usersModel = require('../models/user');
 const models = join(__dirname, 'app/models');
 const port = process.env.PORT || 3000;
 
@@ -58,24 +59,33 @@ connection
    var winston = require('winston');
 const toYAML = require('winston-console-formatter');
 const { formatter, timestamp } = toYAML();
+
 const ViberBot  = require('viber-bot').Bot;
-function createLogger() {
-    const logger = new winston.Logger({
-        level: "debug" // We recommend using the debug level for development
-    });
-    logger.add(winston.transports.Console, {formatter, timestamp});
-    return logger;
-}
-const logger = createLogger();
+const BotEvents = require('viber-bot').Events;
+const TextMessage = require('viber-bot').Message.Text;
+
   const bot = new ViberBot(logger, {
-    authToken: "492dd39cdd67d7e9-8183cf8aa72f5f83-4b9561e01920061f", // <--- Paste your token here
-    name: "Is It Up",  // <--- Your bot name here
-    avatar: "http://api.adorable.io/avatar/200/isitup" // It is recommended to be 720x720, and no more than 100kb.
+    authToken: "492dd39cdd67d7e9-8183cf8aa72f5f83-4b9561e01920061f", 
+    name: "Viber bot",  
+    avatar: "" 
 });
 app.use(bot.middleware());
 
-const TextMessage = require('viber-bot').Message.Text;
-bot.onSubscribe(response => bot.sendMessage(response.userProfile, new TextMessage('Hello ' + response.userProfile.name)));
+bot.onSubscribe(response => {
+  var user = {
+    name: response.userProfile.name,
+    phone: response.userProfile.id,
+  }
+  usersModel.save(user, function(err){
+    if(err)console.log(err);
+  })
+  bot.sendMessage(response.userProfile, new TextMessage('Hello ' + response.userProfile.name))
+});
+bot.onUnsubscribe(userId => console.log(`Unsubscribed: ${userId}`));
+bot.on(BotEvents.MESSAGE_RECEIVED, (message, response) => {
+	// Echo's back the message to the client. Your bot logic should sit here.
+	response.send(message);
+});
 
 function listen () {
   if (app.get('env') === 'test') return;
@@ -93,7 +103,6 @@ function listen () {
         socket.on('message', (msg) => {
             console.log('получено сообщение ' + msg);
             var msgPars = JSON.parse(msg);
-            //bot.sendMessage(userProfile, new TextMessage(msgPars));
 
             for(var key in clients){
                 clients[key].send(msg);
@@ -122,9 +131,17 @@ function listen () {
   // });
 
   console.log('Express app started on port ' + port);
-  //util.createUser(constants.DEFAULT_USER_EMAIL,constants.DEFAULT_USER_PASSWORD);  
 }  
 
+
+function createLogger() {
+  const logger = new winston.Logger({
+      level: "debug" // We recommend using the debug level for development
+  });
+  logger.add(winston.transports.Console, {formatter, timestamp});
+  return logger;
+}
+const logger = createLogger();
 
 function connect () {
   var options = { poolSize:20,useMongoClient: true };

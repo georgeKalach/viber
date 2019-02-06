@@ -6,6 +6,7 @@ const UserSchema = new Schema({
   email: { type: String, default: '' },
   phone: {type: String, required: true},
   password: { type: String, default: '' }, 
+  viberProfile: Object,
 });
 
 
