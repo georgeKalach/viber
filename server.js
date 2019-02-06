@@ -80,18 +80,18 @@ const TextMessage = require('viber-bot').Message.Text;
 
 //app.use(bot.middleware());
 
-bot.onSubscribe(response => {
-  console.log(' 00000000000000000000000000 subscribe 00000000000000000000000000');
-  // var user = {
-  //   name: response.userProfile.name,
-  //   phone: response.userProfile.id,
-  // }
-  // usersModel.save(user, function(err){
-  //   if(err)console.log(err);
-  //   else console.log('xxxxxxxxxxx save xxxxxxxxxxxxxxxxxxx');
-  // })
-  bot.sendMessage(response.userProfile, new TextMessage('Hello ' + response.userProfile.name))
-});
+// bot.onSubscribe(response => {
+//   console.log(' 00000000000000000000000000 subscribe 00000000000000000000000000');
+//   // var user = {
+//   //   name: response.userProfile.name,
+//   //   phone: response.userProfile.id,
+//   // }
+//   // usersModel.save(user, function(err){
+//   //   if(err)console.log(err);
+//   //   else console.log('xxxxxxxxxxx save xxxxxxxxxxxxxxxxxxx');
+//   // })
+//   bot.sendMessage(response.userProfile, new TextMessage('Hello ' + response.userProfile.name))
+// });
 bot.onUnsubscribe(userId => console.log(`000000000000000000000000000 Unsubscribed: ${userId} 0000000000000000000000000000`));
 // bot.on(BotEvents.MESSAGE_RECEIVED, (message, response) => {
 //   console.log(' ---------------------------------- event --------------------------------');
@@ -101,10 +101,10 @@ bot.onUnsubscribe(userId => console.log(`000000000000000000000000000 Unsubscribe
 bot.onTextMessage(/./, (message, response) =>
     response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`)));
 
-// bot.on(BotEvents.SUBSCRIBED,  response => {
-//       console.log(' 00000000000000000000000000 subscribe 00000000000000000000000000');
-//       response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`))
-//     });
+bot.on(BotEvents.SUBSCRIBED,  response => {
+      console.log(' 00000000000000000000000000 subscribe 00000000000000000000000000');
+      response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`))
+    });
 
 function listen () {
   if (app.get('env') === 'test') return;
