@@ -79,7 +79,7 @@ const TextMessage = require('viber-bot').Message.Text;
 });
 if(bot)console.log('/////////////////// bot true ////////////////////////');
 
-app.use(bot.middleware());
+//app.use(bot.middleware());
 
 bot.onSubscribe(response => {
   console.log(' 00000000000000000000000000 subscribe 00000000000000000000000000');
@@ -101,6 +101,11 @@ bot.on(BotEvents.MESSAGE_RECEIVED, (message, response) => {
 });
 bot.onTextMessage(/./, (message, response) =>
     response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`)));
+
+bot.on(BotEvents.SUBSCRIBED,  response => {
+      console.log(' 00000000000000000000000000 subscribe 00000000000000000000000000');
+      response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`))
+    });
 
 function listen () {
   if (app.get('env') === 'test') return;
