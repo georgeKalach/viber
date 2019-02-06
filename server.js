@@ -129,7 +129,7 @@ function listen () {
             }
         })
         socket.on('close', () => {
-            console.log('соединение закрыто ' + id);
+            console.log('соединение закрыто ' + id); 
             delete clients[id];
         })
     })
