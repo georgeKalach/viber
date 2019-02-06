@@ -22,7 +22,7 @@ const config = require('./config');
 //const util = require('./app/controllers/Util');
 const constants = require('./config/constants');
 
-var usersModel = require('../models/user');
+var usersModel = require('./app/models/user');
 const models = join(__dirname, 'app/models');
 const port = process.env.PORT || 3000;
 
@@ -67,7 +67,7 @@ const TextMessage = require('viber-bot').Message.Text;
   const bot = new ViberBot(logger, {
     authToken: "492dd39cdd67d7e9-8183cf8aa72f5f83-4b9561e01920061f", 
     name: "Viber bot",  
-    avatar: "" 
+    avatar: "http://api.adorable.io/avatar/200/isitup" 
 });
 app.use(bot.middleware());
 
