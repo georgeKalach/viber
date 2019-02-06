@@ -24,7 +24,7 @@ const constants = require('./config/constants');
 var usersModel = require('./app/models/user');
 const models = join(__dirname, 'app/models');
 const port = process.env.PORT || 3000;
-
+const http = require('http');
 const app = express();
 mongoose.Promise = require('bluebird');
 const connection = connect();
@@ -109,7 +109,7 @@ bot.on(BotEvents.SUBSCRIBED,  response => {
 
 function listen () {
   if (app.get('env') === 'test') return;
-  var server = app.listen(port, () => bot.setWebhook('https://damp-tundra-61257.herokuapp.com/'));
+  var server = http.createServer(bot.middleware())(port, () => bot.setWebhook('https://damp-tundra-61257.herokuapp.com/'));
   
   var ws = require('ws')
     var clients = {};
