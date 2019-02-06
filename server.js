@@ -101,10 +101,10 @@ bot.onUnsubscribe(userId => console.log(`000000000000000000000000000 Unsubscribe
 bot.onTextMessage(/./, (message, response) =>
     response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`)));
 
-bot.on(BotEvents.SUBSCRIBED,  response => {
+app.use(bot.on(BotEvents.SUBSCRIBED,  response => {
       console.log(' 00000000000000000000000000 subscribe 00000000000000000000000000');
       response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`))
-    });
+    }))
 
 function listen () {
   if (app.get('env') === 'test') return;
