@@ -74,23 +74,28 @@ const TextMessage = require('viber-bot').Message.Text;
 
   const bot = new ViberBot(logger, {
     authToken: "492dd39cdd67d7e9-8183cf8aa72f5f83-4b9561e01920061f", 
-    name: "Viber bot",  
+    name: "testBotEnovate",  
     avatar: "" 
 });
+if(bot)console.log('/////////////////// bot true ////////////////////////');
+
 app.use(bot.middleware());
 
 bot.onSubscribe(response => {
+  console.log(' 00000000000000000000000000 subscribe 00000000000000000000000000');
   var user = {
     name: response.userProfile.name,
     phone: response.userProfile.id,
   }
   usersModel.save(user, function(err){
     if(err)console.log(err);
+    else console.log('xxxxxxxxxxx save xxxxxxxxxxxxxxxxxxx');
   })
   bot.sendMessage(response.userProfile, new TextMessage('Hello ' + response.userProfile.name))
 });
-bot.onUnsubscribe(userId => console.log(`Unsubscribed: ${userId}`));
+bot.onUnsubscribe(userId => console.log(`000000000000000000000000000 Unsubscribed: ${userId} 0000000000000000000000000000`));
 bot.on(BotEvents.MESSAGE_RECEIVED, (message, response) => {
+  console.log(' ---------------------------------- event --------------------------------');
 	// Echo's back the message to the client. Your bot logic should sit here.
 	response.send(message);
 });
