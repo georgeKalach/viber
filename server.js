@@ -109,7 +109,7 @@ bot.on(BotEvents.SUBSCRIBED,  response => {
 
 function listen () {
   if (app.get('env') === 'test') return;
-  var server = app.listen(port, bot.middleware());
+  var server = app.listen(port,  () => bot.setWebhook('https://damp-tundra-61257.herokuapp.com/'));
   
   var ws = require('ws')
     var clients = {};
