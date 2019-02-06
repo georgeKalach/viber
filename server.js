@@ -21,7 +21,7 @@ const passport = require('passport');
 const config = require('./config');
 //const util = require('./app/controllers/Util');
 const constants = require('./config/constants');
-var usersModel = require('./app/models/user');
+//var usersModel = require('./app/models/user');
 const models = join(__dirname, 'app/models');
 const port = process.env.PORT || 3000;
 
@@ -71,13 +71,13 @@ const TextMessage = require('viber-bot').Message.Text;
 app.use(bot.middleware());
 
 bot.onSubscribe(response => {
-  var user = {
-    name: response.userProfile.name,
-    phone: response.userProfile.id,
-  }
-  usersModel.save(user, function(err){
-    if(err)console.log(err);
-  })
+  // var user = {
+  //   name: response.userProfile.name,
+  //   phone: response.userProfile.id,
+  // }
+  // usersModel.save(user, function(err){
+  //   if(err)console.log(err);
+  // })
   bot.sendMessage(response.userProfile, new TextMessage('Hello ' + response.userProfile.name))
 });
 bot.onUnsubscribe(userId => console.log(`Unsubscribed: ${userId}`));
