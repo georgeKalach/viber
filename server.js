@@ -75,7 +75,7 @@ const TextMessage = require('viber-bot').Message.Text;
   const bot = new ViberBot(logger, {
     authToken: "492dd39cdd67d7e9-8183cf8aa72f5f83-4b9561e01920061f", 
     name: "Viber bot",  
-    avatar: "http://viber.com/avatar.jpg" 
+    avatar: "" 
 });
 app.use(bot.middleware());
 
@@ -94,6 +94,8 @@ bot.on(BotEvents.MESSAGE_RECEIVED, (message, response) => {
 	// Echo's back the message to the client. Your bot logic should sit here.
 	response.send(message);
 });
+bot.onTextMessage(/./, (message, response) =>
+    response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`)));
 
 function listen () {
   if (app.get('env') === 'test') return;
