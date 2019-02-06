@@ -33,7 +33,7 @@
         var socketId;
         $('.chat .nick').text(name);
 
-     var ws = new WebSocket('ws://damp-tundra-61257.herokuapp.com/');
+     var ws = new WebSocket('ws://damp-tundra-61257.herokuapp.com/ ');
      $("#message_btn").click(function () {
             var text = $("#message_text").val();
             if (text.length <= 0)

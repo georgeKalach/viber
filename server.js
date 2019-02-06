@@ -75,11 +75,11 @@ const logger = createLogger();
 app.use(bot.middleware());
 
 const TextMessage = require('viber-bot').Message.Text;
-
+bot.onSubscribe(response => bot.sendMessage(rsponse.userProfile, new TextMessage('Hello ' + rsponse.userProfile.name)));
 
 function listen () {
   if (app.get('env') === 'test') return;
-  var server = app.listen(port, () => bot.setWebhook(process.env.NOW_URL || process.env.HEROKU_URL));
+  var server = app.listen(port, () => bot.setWebhook('https://damp-tundra-61257.herokuapp.com/'));
   
   var ws = require('ws')
     var clients = {};
@@ -93,7 +93,7 @@ function listen () {
         socket.on('message', (msg) => {
             console.log('получено сообщение ' + msg);
             var msgPars = JSON.parse(msg);
-            bot.sendMessage(userProfile, new TextMessage(msgPars));
+            //bot.sendMessage(userProfile, new TextMessage(msgPars));
 
             for(var key in clients){
                 clients[key].send(msg);
