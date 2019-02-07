@@ -73,7 +73,7 @@ const BotEvents = require('viber-bot').Events;
 const TextMessage = require('viber-bot').Message.Text;
 
   const bot = new ViberBot(logger, {
-    authToken: "492dd39cdd67d7e9-8183cf8aa72f5f83-4b9561e01920061f", 
+    authToken: "49306c6e9ae7d0e7-e41748267a82b565-92532f5b5384f854", 
     name: "testBotEnovate",  
     avatar: `${__dirname}/public/img/icona.JPG` 
 });
