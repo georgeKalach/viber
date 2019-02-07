@@ -75,8 +75,10 @@ const TextMessage = require('viber-bot').Message.Text;
   const bot = new ViberBot(logger, {
     authToken: "492dd39cdd67d7e9-8183cf8aa72f5f83-4b9561e01920061f", 
     name: "testBotEnovate",  
-    avatar: "" 
+    avatar: `${__dirname}/public/img/icona.JPG` 
 });
+console.log('///////////////////' + bot.name);
+
 
 app.use(bot.setWebhook('https://damp-tundra-61257.herokuapp.com/'), bot.middleware());
 
@@ -92,6 +94,7 @@ app.use(bot.setWebhook('https://damp-tundra-61257.herokuapp.com/'), bot.middlewa
 //   // })
 //   bot.sendMessage(response.userProfile, new TextMessage('Hello ' + response.userProfile.name))
 // });
+
 bot.onUnsubscribe(userId => console.log(`000000000000000000000000000 Unsubscribed: ${userId} 0000000000000000000000000000`));
 bot.on(BotEvents.MESSAGE_RECEIVED, (message, response) => {
 	response.send(message);
@@ -103,6 +106,8 @@ bot.on(BotEvents.SUBSCRIBED,  response => {
       console.log(' 00000000000000000000000000 subscribe 00000000000000000000000000');
       response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`))
     });
+bot.onTextMessage(/^hi|hello$/i, (message, response) =>
+    response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`)));
 
 function listen () {
   if (app.get('env') === 'test') return;

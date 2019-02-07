@@ -26,6 +26,7 @@ module.exports = function (app, passport) {
 		res.render('./chat')
 	});
 
+
 	app.post('/registr', users.registr);
 	app.post('/login', users.login);
 	app.delete('/user/delete/', passport.authenticate('jwt', {session : false}), users.deleteUser);
