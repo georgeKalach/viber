@@ -18,7 +18,7 @@ const bot = new ViberBot(logger, {
 console.log('///////////////////' + bot.name);
 const webhookUrl = ' https://damp-tundra-61257.herokuapp.com/';
 
-https.createServer(httpsOptions, bot.middleware()).listen(port, () => bot.setWebhook(webhookUrl));
+https.createServer(bot.middleware()).listen(port, () => bot.setWebhook(webhookUrl));
 //app.use(bot.setWebhook('https://damp-tundra-61257.herokuapp.com/'), bot.middleware());
 
 // bot.onSubscribe(response => {
