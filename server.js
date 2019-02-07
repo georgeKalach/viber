@@ -1,5 +1,7 @@
 'use strict';
-const https = require('https');
+
+const fs = require('fs');
+const join = require('path').join;
 const port = process.env.PORT || 3000;
 var winston = require('winston');
 const toYAML = require('winston-console-formatter');
@@ -7,8 +9,28 @@ const { formatter, timestamp } = toYAML();
 const ViberBot  = require('viber-bot').Bot;
 const BotEvents = require('viber-bot').Events;
 const TextMessage = require('viber-bot').Message.Text;
+const express = require('express');
+const config = require('./config');
+const passport = require('passport');
+const models = join(__dirname, 'app/models');
+const app = express();
+//const connection = connect();
+
+// Bootstrap models
+fs.readdirSync(models)
+  .filter(file => ~file.indexOf('.js'))
+  .forEach(file => require(join(models, file)));
+
+require('./config/passport')(passport);
+require('./config/express')(app, passport);
+//require('./config/routes')(app, passport);
 
 const logger = createLogger();
+
+module.exports = {
+  app,
+  //connection,
+};
 
 const bot = new ViberBot(logger, {
     authToken: "492dd39cdd67d7e9-8183cf8aa72f5f83-4b9561e01920061f", 
@@ -17,8 +39,20 @@ const bot = new ViberBot(logger, {
 });
 console.log('///////////////////' + bot.name);
 const webhookUrl = ' https://damp-tundra-61257.herokuapp.com/';
+app.use(bot.setWebhook(webhookUrl), bot.middleware());
 
-https.createServer(bot.middleware()).listen(port, () => bot.setWebhook(webhookUrl));
+
+// connection
+//   .on('error', console.log)
+//   .on('disconnected', connect)
+//   .once('open', listen);
+
+//function listen() {
+  //if (app.get('env') === 'test') return;
+  app.listen(port);
+  console.log('Express app started on port ' + port);
+//}
+
 //app.use(bot.setWebhook('https://damp-tundra-61257.herokuapp.com/'), bot.middleware());
 
 // bot.onSubscribe(response => {
