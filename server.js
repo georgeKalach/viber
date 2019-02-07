@@ -37,7 +37,7 @@ connection
 
 function listen() {
   if (app.get('env') === 'test') return;
-  app.listen(port, );
+  app.listen(port,() => bot.setWebhook(webhookUrl) );
   console.log('Express app started on port ' + port);
   
 }
