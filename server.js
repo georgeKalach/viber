@@ -37,7 +37,7 @@ connection
 
 function listen() {
   if (app.get('env') === 'test') return;
-  app.listen(port,() => bot.setWebhook(webhookUrl) );
+  app.listen(port );
   console.log('Express app started on port ' + port);
   
 }
@@ -47,6 +47,8 @@ function connect() {
   var connection = mongoose.connect(config.db, options);
   return connection;
 }
+
+/////////////////////////  viber ////////////////////////////
 
 const toYAML = require('winston-console-formatter');
 const { formatter, timestamp } = toYAML();
@@ -61,38 +63,18 @@ const bot = new ViberBot(logger, {
   name: "testBotEnovate",  
   avatar: `${__dirname}/public/img/icona.JPG` 
 });
-console.log('///////////////////' + bot.name);
-const webhookUrl = 'https://damp-tundra-61257.herokuapp.com/';
-app.use(webhookUrl, bot.middleware());
+console.log(bot.name);
 
-bot.onUnsubscribe(userId => console.log(`000000000000000000000000000 Unsubscribed: ${userId} 0000000000000000000000000000`));
+const webhookUrl = 'https://damp-tundra-61257.herokuapp.com/';
+app.use('/', bot.middleware());
+
+bot.onUnsubscribe(userId => console.log(`Unsubscribed: ${userId}`));
 bot.on(BotEvents.MESSAGE_RECEIVED, (message, response) => {
 	response.send(message);
 });
 bot.on(BotEvents.SUBSCRIBED,  response => {
-      console.log(' 00000000000000000000000000 subscribe 00000000000000000000000000');
       response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`))
     });
-
-// // bot.onSubscribe(response => {
-// //   console.log(' 00000000000000000000000000 subscribe 00000000000000000000000000');
-// //   // var user = {
-// //   //   name: response.userProfile.name,
-// //   //   phone: response.userProfile.id,
-// //   // }
-// //   // usersModel.save(user, function(err){
-// //   //   if(err)console.log(err);
-// //   //   else console.log('xxxxxxxxxxx save xxxxxxxxxxxxxxxxxxx');
-// //   // })
-// //   bot.sendMessage(response.userProfile, new TextMessage('Hello ' + response.userProfile.name))
-// // });
-
-
-// bot.onTextMessage(/./, (message, response) =>
-//     response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`)));
-
-// bot.onTextMessage(/^hi|hello$/i, (message, response) =>
-//     response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`)));
 
 
 
