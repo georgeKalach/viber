@@ -37,7 +37,7 @@ connection
 
 function listen() {
   if (app.get('env') === 'test') return;
-  app.listen(port );
+  app.listen(port, () => bot.setWebhook(process.env.HEROKU_URL));
   console.log('Express app started on port ' + port);
   
 }
@@ -65,7 +65,7 @@ const bot = new ViberBot(logger, {
 });
 console.log(bot.name);
 
-const webhookUrl = 'https://damp-tundra-61257.herokuapp.com/';
+//const webhookUrl = 'https://damp-tundra-61257.herokuapp.com/';
 app.use('/', bot.middleware());
 
 bot.onUnsubscribe(userId => console.log(`Unsubscribed: ${userId}`));
