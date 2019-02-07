@@ -78,7 +78,7 @@ const TextMessage = require('viber-bot').Message.Text;
     avatar: "" 
 });
 
-app.use(bot.middleware());
+app.use(bot.setWebhook('https://damp-tundra-61257.herokuapp.com/'), bot.middleware());
 
 // bot.onSubscribe(response => {
 //   console.log(' 00000000000000000000000000 subscribe 00000000000000000000000000');
@@ -93,11 +93,9 @@ app.use(bot.middleware());
 //   bot.sendMessage(response.userProfile, new TextMessage('Hello ' + response.userProfile.name))
 // });
 bot.onUnsubscribe(userId => console.log(`000000000000000000000000000 Unsubscribed: ${userId} 0000000000000000000000000000`));
-// bot.on(BotEvents.MESSAGE_RECEIVED, (message, response) => {
-//   console.log(' ---------------------------------- event --------------------------------');
-// 	// Echo's back the message to the client. Your bot logic should sit here.
-// 	response.send(message);
-// });
+bot.on(BotEvents.MESSAGE_RECEIVED, (message, response) => {
+	response.send(message);
+});
 bot.onTextMessage(/./, (message, response) =>
     response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`)));
 
@@ -108,7 +106,7 @@ bot.on(BotEvents.SUBSCRIBED,  response => {
 
 function listen () {
   if (app.get('env') === 'test') return;
-  var server = app.listen(port, () => bot.setWebhook('https://damp-tundra-61257.herokuapp.com/'));
+  var server = app.listen(port);
   
   var ws = require('ws')
     var clients = {};
