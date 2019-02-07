@@ -62,8 +62,8 @@ const bot = new ViberBot(logger, {
   avatar: `${__dirname}/public/img/icona.JPG` 
 });
 console.log('///////////////////' + bot.name);
-const webhookUrl = ' https://damp-tundra-61257.herokuapp.com/';
-app.use(() => bot.setWebhook(webhookUrl), bot.middleware());
+const webhookUrl = 'https://damp-tundra-61257.herokuapp.com/';
+app.use(webhookUrl, bot.middleware());
 
 bot.onUnsubscribe(userId => console.log(`000000000000000000000000000 Unsubscribed: ${userId} 0000000000000000000000000000`));
 bot.on(BotEvents.MESSAGE_RECEIVED, (message, response) => {
