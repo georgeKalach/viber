@@ -15,7 +15,7 @@ const app = express();
 mongoose.Promise = require('bluebird');
 const connection = connect();
 
-const webhookUrl = 'https://git.heroku.com/damp-tundra-61257.git';
+const webhookUrl = 'https://damp-tundra-61257.herokuapp.com/';
 module.exports = {
   app,
   connection,
