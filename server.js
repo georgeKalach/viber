@@ -15,6 +15,7 @@ const app = express();
 mongoose.Promise = require('bluebird');
 const connection = connect();
 
+const webhookUrl = 'https://git.heroku.com/damp-tundra-61257.git';
 module.exports = {
   app,
   connection,
@@ -37,9 +38,8 @@ connection
 
 function listen() {
   if (app.get('env') === 'test') return;
-  app.listen(port);
+  app.listen(port, () => bot.setWebhook(webhookUrl));
   console.log('Express app started on port ' + port);
-  
 }
 
 function connect() {
@@ -65,8 +65,7 @@ const bot = new ViberBot(logger, {
 });
 console.log(bot.name);
 
-const webhookUrl = 'https://damp-tundra-61257.herokuapp.com/';
-app.use('/', bot.middleware());
+app.use(webhookUrl, bot.middleware());
 
 bot.onUnsubscribe(userId => console.log(`Unsubscribed: ${userId}`));
 bot.on(BotEvents.MESSAGE_RECEIVED, (message, response) => {
