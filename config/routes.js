@@ -4,51 +4,61 @@
  * Module dependencies.
  */
 const home = require('../app/controllers/home');
+const wialons = require('../app/controllers/wialon');
 const users = require('../app/controllers/user');
-//const index = require('../public')
-const fs = require('fs');
-//const router = express.Router()
+const BotEvents = require('viber-bot').Events;
+const TextMessage = require('viber-bot').Message.Text;
 
 
 /**
  * Expose
  */
-module.exports = function (app, passport) {
+module.exports = function (app, passport, bot) {
 
 	app.get('/', function(req, res){
+		res.render('login')
+	});
+	app.get('/lol', function(req, res){             //del
+		//wialons.wialon(req, res)
 		res.render('login')
 	});
 	app.get('/signup', function(req, res){
 		res.render('signup')
 	});
 	app.get('/chat',  function(req, res){
-
 		res.render('./chat')
 	});
 
+	app.get('/wialon',  function(req, res){
+		res.render('wialon')
+	});
+	app.post('/wialon',  wialons.wialon);
 
-	app.post('/registr', users.registr);
-	app.post('/login', users.login);
-	app.delete('/user/delete/', passport.authenticate('jwt', {session : false}), users.deleteUser);
-	app.post('/user/update/', passport.authenticate('jwt', {session : false}), users.updateUser);
-	app.get('/user/get/', passport.authenticate('jwt', {session : false}), users.getUser);
+	bot.on(BotEvents.SUBSCRIBED,  response => {
+		users.createUser(response);
+		response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`))
+	});
 
-	//app.get('/', home.index);
-	// app.get('/', function(req, res){
-	// 	let filePath = req.url.substr(1);
-	// 	console.log('/////////////////'+filePath);
-		
-	// 	fs.readFile(filePath, function(error, data){
-    //         if(error){
-    //             res.statusCode = 404;
-    //             res.end("Resourse not found!");
-    //         }   
-    //         else{
-    //             res.setHeader("Content-Type", "text/html");
-    //             res.end(data);
-	// 		}
-	// 	})
-	// });
+	bot.onUnsubscribe(userId => {
+		users.deleteUser(userId);
+		console.log(`Unsubscribed: ${userId}`);
+	})
+	
+	bot.on(BotEvents.MESSAGE_RECEIVED, (message, response) => {
+		users.receivedMsg(response, function(err, wialoneStatus){
+			if(err){
+				console.log(err);
+				return;
+			}
+			if(wialoneStatus){
+	// message send to zoho
+				bot.sendMessage(response.userProfile, new TextMessage(message.text));
+			}
+			else{
+				bot.sendMessage(response.userProfile, new TextMessage("Please go to the wialone to continue the dialogue"));
+			}
+		})
+	});
 
 	/**
 	 * Error handling
@@ -62,11 +72,11 @@ module.exports = function (app, passport) {
 		}
 		console.error(err.stack);
 		// error page
-		res.status(500).sendError('ERR500');
+		res.status(500).send('ERR500');
 	});
 
 	// assume 404 since no middleware responded
 	app.use(function (req, res, next) {
-		res.status(404).sendError('ERR404');
+		res.status(404).send('ERR404');
 	});
 };

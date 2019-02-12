@@ -2,11 +2,13 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
+  viberId : String,
   name: { type: String, default: '' },
-  email: { type: String, default: '' },
-  phone: {type: String, required: true},
-  password: { type: String, default: '' }, 
-  viberProfile: Object,
+  viberProfile: String,
+  wialoneStatus: {
+    type: Boolean,
+    default: false
+  }
 });
 
 

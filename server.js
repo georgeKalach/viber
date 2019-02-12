@@ -8,6 +8,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const config = require('./config');
+var wialons = require('./app/controllers/wialon')
 const models = join(__dirname, 'app/models');
 const port = process.env.PORT || 3000;
 
@@ -15,7 +16,20 @@ const app = express();
 mongoose.Promise = require('bluebird');
 const connection = connect();
 
-const webhookUrl = 'https://damp-tundra-61257.herokuapp.com/';
+const webhookUrl = 'https://cbb67ec5.ngrok.io';
+const ViberBot  = require('viber-bot').Bot;
+
+var winston = require('winston');
+const toYAML = require('winston-console-formatter');
+const { formatter, timestamp } = toYAML();
+const logger = createLogger();
+
+const bot = new ViberBot(logger, {
+  authToken: "492dd39cdd67d7e9-8183cf8aa72f5f83-4b9561e01920061f", 
+  name: "Support",  
+  avatar: `${__dirname}/public/img/avatar.jpg` 
+});
+
 module.exports = {
   app,
   connection,
@@ -28,8 +42,8 @@ fs.readdirSync(models)
 
 // Bootstrap routes
 require('./config/passport')(passport);
-require('./config/express')(app, passport);
-require('./config/routes')(app, passport);
+require('./config/express')(app, passport, bot);
+require('./config/routes')(app, passport, bot);
 
 connection
   .on('error', console.log)
@@ -40,44 +54,17 @@ function listen() {
   if (app.get('env') === 'test') return;
   app.listen(port, () => bot.setWebhook(webhookUrl));
   console.log('Express app started on port ' + port);
+  wialons.wialonCreate('admin', '');
+
 }
 
 function connect() {
-  var options = { poolSize: 20, useMongoClient: true };
+  var options = { poolSize: 20, useMongoClient: true};
   var connection = mongoose.connect(config.db, options);
   return connection;
 }
 
-/////////////////////////  viber ////////////////////////////
-
-const toYAML = require('winston-console-formatter');
-const { formatter, timestamp } = toYAML();
-const ViberBot  = require('viber-bot').Bot;
-const BotEvents = require('viber-bot').Events;
-const TextMessage = require('viber-bot').Message.Text;
-var winston = require('winston');
-
-const logger = createLogger();
-const bot = new ViberBot(logger, {
-  authToken: "492dd39cdd67d7e9-8183cf8aa72f5f83-4b9561e01920061f", 
-  name: "testBotEnovate",  
-  avatar: `${__dirname}/public/img/icona.JPG` 
-});
-console.log(bot.name);
-
-app.use(webhookUrl, bot.middleware());
-
-bot.onUnsubscribe(userId => console.log(`Unsubscribed: ${userId}`));
-bot.on(BotEvents.MESSAGE_RECEIVED, (message, response) => {
-	response.send(message);
-});
-bot.on(BotEvents.SUBSCRIBED,  response => {
-      response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`))
-    });
-
-
-
-function createLogger() {
+function createLogger(){
   const logger = new winston.Logger({
       level: "debug" // We recommend using the debug level for development
   });
@@ -85,3 +72,11 @@ function createLogger() {
   return logger;
 }
 
+
+/////////////////// scheduler
+const scheduler = require('node-schedule');
+const wialonStatus = require('./app/controllers/wialon');
+
+scheduler.scheduleJob('*/10 * * * * *', function(){
+  wialonStatus.wialonStatus();
+})

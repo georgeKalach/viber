@@ -1,8 +1,4 @@
 
-/**
- * Module dependencies.
- */
-
 var express = require('express');
 var session = require('express-session');
 var compression = require('compression');
@@ -24,14 +20,15 @@ let responseHandler=require('../app/controllers/response-handler');
 let requestValidator=require('../app/controllers/request-validator');
 
 var env = process.env.NODE_ENV || 'development';
-/**
- * Expose
- */
 
-module.exports = function (app, passport) {
+module.exports = function (app, passport, bot) {
 
   app.set('views', join(__dirname.replace('config', 'public'), 'views'))
   app.set('view engine', 'ejs')
+
+  // viber bot
+	app.post('/', bot.middleware());
+
 
   app.use(cors({
     origin: '*',
@@ -107,9 +104,7 @@ module.exports = function (app, passport) {
 
   // app.set('view engine', 'jade');
 
-  app.use(responseHandler);
+  //app.use(responseHandler);
   app.use(requestValidator);
 
-  //jwt secret
-  app.set("secret", "very_big_secret_key");
 };
