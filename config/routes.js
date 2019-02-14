@@ -36,7 +36,7 @@ module.exports = function (app, passport, bot) {
 
 	bot.on(BotEvents.SUBSCRIBED,  response => {
 		users.createUser(response);
-		response.send(new TextMessage(`Hi there ${response.userProfile.name}. I am ${bot.name}`))
+		response.send(new TextMessage(`Hi ${response.userProfile.name}. I am ${bot.name}\nPlease write youre phone associated with wialon`))
 	});
 
 	bot.onUnsubscribe(userId => {
@@ -45,20 +45,35 @@ module.exports = function (app, passport, bot) {
 	})
 	
 	bot.on(BotEvents.MESSAGE_RECEIVED, (message, response) => {
-		users.receivedMsg(response, function(err, wialoneStatus){
-			if(err){
-				console.log(err);
-				return;
+		var userProfile = response.userProfile;
+		users.receivedMsg(message.text, response, function(err, wialoneStatus){
+			if(err) console.log(err);
+			
+			if(wialoneStatus == 'phone not attached') {
+				say(userProfile, "I'm sorry your phone is not attached to device\nPlease call support <number>")
 			}
-			if(wialoneStatus){
+			if(wialoneStatus == 'phone invalid'){
+                say(userProfile, "Please enter valid phone nomber")
+			}
+			if(wialoneStatus == 'more device'){
+                say(userProfile, "I'm sorry your phone is not attached more then one device\nPlease call support <number>")
+			}
+			if(wialoneStatus == 'objects is not found'){
+                say(userProfile, "I'm sorry objects is not found\nPlease try again")
+			}
+			if(wialoneStatus === 1){    //status online
 	// message send to zoho
-				bot.sendMessage(response.userProfile, new TextMessage(message.text));
+				bot.sendMessage(userProfile, new TextMessage(message.text));
 			}
-			else{
-				bot.sendMessage(response.userProfile, new TextMessage("Please go to the wialone to continue the dialogue"));
+			if(wialoneStatus === 0){
+				say(userProfile, "Please connect to the wialone to continue the dialogue")
 			}
 		})
 	});
+
+	function say(userProfile, msg){
+		return bot.sendMessage(userProfile, new TextMessage(msg));
+	}
 
 	/**
 	 * Error handling
