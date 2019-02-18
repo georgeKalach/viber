@@ -6,10 +6,11 @@ const UserSchema = new Schema({
   name: { type: String, default: '' },
   viberProfile: String,
   phone : Number,
-  previousWialonStatus : {
-    type : Number,
-    default : 0
-  },
+  // previousWialonStatus : {
+  //   type : Number,
+  //   default : 0
+  // },
+  wialoneName: String,
   wialoneStatus: {
     type: Number,
     default: 0

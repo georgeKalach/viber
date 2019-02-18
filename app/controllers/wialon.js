@@ -60,7 +60,13 @@ exports.getObjWialon = function(callback){
             })
             
           }
-          callback(err, JSON.parse(body).items)
+          var objects = JSON.parse(body).items;
+          var wialonObjs = JSON.stringify(objects);
+          obj.wialonObjs = wialonObjs;
+          obj.save(function(err){
+            if(err) console.error(err);
+          })
+          callback(err, objects)
         })
       })
 }

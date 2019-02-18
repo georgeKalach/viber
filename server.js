@@ -14,12 +14,13 @@ var wialonAdmShema = require('./app/models/adminWialon')
 const models = join(__dirname, 'app/models');
 const async = require('async')
 const port = process.env.PORT || 3000;
+const constants = require('./config/constants');
 
 const app = express();
 mongoose.Promise = require('bluebird');
 const connection = connect();
 
-const webhookUrl = 'https://86fed7a5.ngrok.io';
+const webhookUrl = 'https://damp-tundra-61257.herokuapp.com/';
 const ViberBot  = require('viber-bot').Bot;
 
 var winston = require('winston');
@@ -28,9 +29,9 @@ const { formatter, timestamp } = toYAML();
 const logger = createLogger();
 
 const bot = new ViberBot(logger, {
-  authToken: "492dd39cdd67d7e9-8183cf8aa72f5f83-4b9561e01920061f", 
+  authToken: constants.VIBER_AUTH, 
   name: "Support",  
-  avatar: `${__dirname}/public/img/avatar.jpg` 
+  avatar: `./public/img/avatar.jpg` 
 });
 
 module.exports = {
@@ -53,12 +54,40 @@ connection
   .on('disconnected', connect)
   .once('open', listen);
 
+var SocketServer = new require('ws');
+var clients = {};
+
+
 function listen() {
   if (app.get('env') === 'test') return;
-  app.listen(port, () => bot.setWebhook(webhookUrl));
+  var server = app.listen(port, () => bot.setWebhook(webhookUrl));
   console.log('Express app started on port ' + port);
   wialons.wialonCreate('admin', '');
 
+  var webSocketServer = new SocketServer.Server({
+    server: server
+  });
+
+  webSocketServer.on('connection', function(ws) {
+
+    var id = Math.random();
+    clients[id] = ws;
+    console.log("новое соединение " + id);
+
+    ws.on('message', function(message) {
+      console.log('получено сообщение ' + message);
+
+      for (var key in clients) {
+        clients[key].send(message);
+      }
+    });
+
+    ws.on('close', function() {
+      console.log('соединение закрыто ' + id);
+      delete clients[id];
+    });
+
+  });
 }
 
 function connect() {
@@ -79,7 +108,7 @@ function createLogger(){
 /////////////////// scheduler
 const scheduler = require('node-schedule');
 
-scheduler.scheduleJob('*/10 * * * * *', function(){
+scheduler.scheduleJob('*/60 * * * * *', function(){
   wialons.getObjWialon(function(err, wialonObjs){
     if(!wialonObjs) return console.log('getObjWialon return empty');
     
@@ -88,11 +117,11 @@ scheduler.scheduleJob('*/10 * * * * *', function(){
       if(!userObjs[0]) return console.error('Users not find');
 
         async.waterfall([
-          function(callback){
+          function(callback){    //remove the object if it dose not exist in the wialon
             wialonAdmShema.findOne({name : 'admin'}, function(err, admin){
               if(err) return console.log(err);
 
-              if(admin.dateSendMsg[0]){                      //remove the object if it dose not exist in the wialon
+              if(admin.dateSendMsg[0]){
                 for(var j = 0; j < admin.dateSendMsg.length; j++){
                   var valParse = JSON.parse(admin.dateSendMsg[j]);
                   for(var i = 0; i < wialonObjs.length; i++){
@@ -112,29 +141,28 @@ scheduler.scheduleJob('*/10 * * * * *', function(){
               callback(null, admin)
             })
           },
-          function(admin, callback){
+          function(admin, callback){          //check and save wialon status
             for(var i = 0; i < wialonObjs.length; i++){
               var wialonPhone = wialonObjs[i].ph;
 
-              if(wialonPhone) {
+              if(wialonPhone) {  //check status if phone exist to wialon
                 wialonPhone = wialonPhone.substring(wialonPhone.length - 10);
         //status change check
                 for(var j = 0; j < userObjs.length; j++){
                   var userPhone = userObjs[j].phone;
-                  var userWiStatus = userObjs[j].wialoneStatus;
-                  var userPreviousWiStatus = userObjs[j].previousWialonStatus
 
                   if(wialonPhone == userPhone){
-                    userWiStatus = wialonObjs[i].netconn;
-                    if(userWiStatus > userPreviousWiStatus){
-                      userObjs[j].previousWialonStatus = userWiStatus;
+                    if(wialonObjs[i].netconn > userObjs[j].wialoneStatus){
+                      userObjs[j].wialoneStatus = wialonObjs[i].netconn;
                       userObjs[j].save(function(err){
                         if(err) return console.log(err);
-                      }); 
+                        console.log('userObjs[j].previousWialonStatus = ' + userObjs[j].wialoneStatus);
           // to do //send to zoho msg about user online
+                        
+                      }); 
                     }
-                    if(userWiStatus < userPreviousWiStatus){
-                      userObjs[j].previousWialonStatus = userWiStatus;
+                    if(wialonObjs[i].netconn < userObjs[j].wialoneStatus){
+                      userObjs[j].wialoneStatus = wialonObjs[i].netconn;
                       userObjs[j].save(function(err){
                         if(err) return console.log(err);
                       }); 
@@ -143,8 +171,7 @@ scheduler.scheduleJob('*/10 * * * * *', function(){
                   }
                 }
               }
-              if(!wialonPhone){
-        // to do //send alert zoho about field empty if previus true
+              if(!wialonPhone){  //if phone not exist send msg to zoho (once every two days)
                 phoneNotExsist(admin, wialonObjs[i], function(err){
                   if(err) console.log(err);                  
                 })           

@@ -8,7 +8,8 @@ const WialonAdmSchema = new Schema({
     type : String
   , default : ''
   }
-, dateSendMsg : {          //json obj {nmame : 'sys_name', date : Date}
+, wialonObjs: String        //json obj [{nm, cls, id, mu, uid, uid2, hw, ph, ph2, psw, netconn, uacl}]
+, dateSendMsg : {          //json obj {name : 'sys_name', date : Date}
     type: [String]
   , default: []
   }

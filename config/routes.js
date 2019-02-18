@@ -6,9 +6,11 @@
 const home = require('../app/controllers/home');
 const wialons = require('../app/controllers/wialon');
 const users = require('../app/controllers/user');
+const zohos = require('../app/controllers/zoho');
 const BotEvents = require('viber-bot').Events;
 const TextMessage = require('viber-bot').Message.Text;
 
+const tests = require('../app/controllers/test');
 
 /**
  * Expose
@@ -18,10 +20,8 @@ module.exports = function (app, passport, bot) {
 	app.get('/', function(req, res){
 		res.render('login')
 	});
-	app.get('/lol', function(req, res){             //del
-		//wialons.wialon(req, res)
-		res.render('login')
-	});
+	app.post('/test', tests.test);
+
 	app.get('/signup', function(req, res){
 		res.render('signup')
 	});
@@ -33,6 +33,8 @@ module.exports = function (app, passport, bot) {
 		res.render('wialon')
 	});
 	app.post('/wialon',  wialons.wialon);
+
+	app.post('/zoho', zohos.forwardToViber)
 
 	bot.on(BotEvents.SUBSCRIBED,  response => {
 		users.createUser(response);
@@ -46,6 +48,7 @@ module.exports = function (app, passport, bot) {
 	
 	bot.on(BotEvents.MESSAGE_RECEIVED, (message, response) => {
 		var userProfile = response.userProfile;
+		console.log('Received message from Viber ' + message.text);
 		users.receivedMsg(message.text, response, function(err, wialoneStatus){
 			if(err) console.log(err);
 			
@@ -59,13 +62,13 @@ module.exports = function (app, passport, bot) {
                 say(userProfile, "I'm sorry your phone is not attached more then one device\nPlease call support <number>")
 			}
 			if(wialoneStatus == 'objects is not found'){
-                say(userProfile, "I'm sorry objects is not found\nPlease try again")
+                say(userProfile, "I'm sorry objects is not found\nPlease try in 30 sec")
 			}
-			if(wialoneStatus === 1){    //status online
-	// message send to zoho
-				bot.sendMessage(userProfile, new TextMessage(message.text));
+			if(wialoneStatus === 0){    //status online
+				zohos.sendToZoho(message.text, response);
+				//bot.sendMessage(userProfile, new TextMessage(message.text));
 			}
-			if(wialoneStatus === 0){
+			if(wialoneStatus === 1){
 				say(userProfile, "Please connect to the wialone to continue the dialogue")
 			}
 		})

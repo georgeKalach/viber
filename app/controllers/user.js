@@ -68,7 +68,7 @@ exports.receivedMsg = function(message, res, wialoneStatus){
         }
         wialons.getObjWialon(function(err, objects){
             if(!objects) {
-                wialoneStatus(null, 'objects is not find')
+                wialoneStatus(null, 'objects is not found')
                 return console.log('getObjWialon return empty');
             }
 
@@ -91,12 +91,13 @@ exports.receivedMsg = function(message, res, wialoneStatus){
                 return wialoneStatus(null, 'more device')
             }
             if(countDevice == 1){
+                if(typeof phone == 'number') phone = phone.toString();
                 user.phone = phone.substring(phone.length - 10);
+                user.wialoneStatus = objDevice.netconn;
+                user.wialoneName = objDevice.nm;
                 user.save(function(err){
                     if(err) console.log(err);                    
                 })
-                console.log(objDevice);
-                
                 wialoneStatus(null, objDevice.netconn);
                 return;
             }
