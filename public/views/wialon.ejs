@@ -122,7 +122,7 @@ function tokenRecieved(e) {
             let client_secret= loginForm.elements["client_secret"].value;
 
             let scope = 'Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE'
-            let redirect = 'https://damp-tundra-61257.herokuapp.com/auth/'
+            let redirect = 'https://damp-tundra-61257.herokuapp.com/auth'
             let state = '-5466400890088961855'
             let params = `?response_type=code&client_id=${client_id}&scope=${scope}&redirect_uri=${redirect}&state=${state}`;
             var url = `https://accounts.zoho.com/oauth/v2/auth${params}`;
