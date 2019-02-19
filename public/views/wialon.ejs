@@ -7,6 +7,7 @@
 	<script type="text/javascript" src="//hst-api.wialon.com/wsdk/script/wialon.js"></script>
 </head>
 <body>
+    <div id="zoho"></div>
     <div>
         <div class="label">Get token for wialon</div>
         <!-- Call getToken() onclick -->
@@ -127,7 +128,13 @@ function tokenRecieved(e) {
              request.addEventListener("load", function () {
     
               if(request.status < 400){
-                window.location.href = "/";
+                  //console.log(request);
+                var w = window.open('', '', 'scrollbars=1');
+                w.document.write(request.responseText);
+                  
+               // document.getElementById("zoho").innerHTML = request.response; 
+                //window.open(url, "_blank", "width=760, height=500, top=300, left=500");
+                //window.location.href = "/wialon";
               }
               if(request.status >= 400){
                   console.log('error send');

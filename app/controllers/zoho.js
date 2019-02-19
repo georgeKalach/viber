@@ -160,7 +160,9 @@ exports.authGetAuthCode = function(req, res){
     let params = `?response_type=code&client_id=${client_id}&scope=${scope}&redirect_uri=${redirect}&state=${state}`;
     var url = `https://accounts.zoho.com/oauth/v2/auth${params}`;
 
-    request.get(url, function(err, body, res){
+    request.get(url, function(err, body, response){
         if(err) console.log(err);
+        res.send(response)
+        
     });
 }
