@@ -128,11 +128,11 @@ function tokenRecieved(e) {
              request.addEventListener("load", function () {
     
               if(request.status < 400){
-                  console.log(request.response);
-                var w = window.open('', '', 'scrollbars=1');
-                w.document.write(request.response);
+                  //console.log(request.response);
+                // var w = window.open('', '', 'scrollbars=1');
+                // w.document.write(request.response);
                   
-               // document.getElementById("zoho").innerHTML = request.response; 
+                document.getElementById("zoho").innerHTML = request.response; 
                 //window.open(url, "_blank", "width=760, height=500, top=300, left=500");
                 //window.location.href = "/wialon";
               }
