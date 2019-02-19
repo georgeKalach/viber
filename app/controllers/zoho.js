@@ -134,6 +134,7 @@ console.log(body.refresh_token);
                     if(err)console.error(err);            
                 })
             }
+            res.redirect('/');
         });
     })
 }
@@ -153,16 +154,4 @@ exports.authGetAuthCode = function(req, res){
             if(err)console.error(err);            
         })
     })
-    
-    // let scope = 'Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE'
-    // let redirect = 'https://damp-tundra-61257.herokuapp.com/auth/'
-    // let state = '-5466400890088961855'
-    // let params = `?response_type=code&client_id=${client_id}&scope=${scope}&redirect_uri=${redirect}&state=${state}`;
-    // var url = `https://accounts.zoho.com/oauth/v2/auth${params}`;
-
-    // request.get(url, function(err, body, response){
-    //     if(err) console.log(err);
-    //     res.send(response)
-        
-    // });
 }

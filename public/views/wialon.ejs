@@ -128,9 +128,6 @@ function tokenRecieved(e) {
             var url = `https://accounts.zoho.com/oauth/v2/auth${params}`;
             window.open(url, "_blank", "width=760, height=500, top=300, left=500");
 
-
-
-
             let user = JSON.stringify({client_id: client_id, client_secret: client_secret});
             // сериализуем данные в json
             let request = new XMLHttpRequest();
@@ -141,12 +138,8 @@ function tokenRecieved(e) {
     
               if(request.status < 400){
                   console.log('request ok');
-                // var w = window.open('', '', 'scrollbars=1');
-                // w.document.write(request.response);
-                  
-                //document.getElementById("zoho").innerHTML = request.response; 
-                //window.open(url, "_blank", "width=760, height=500, top=300, left=500");
-                //window.location.href = "/wialon";
+                  window.location.href = "/";
+                
               }
               if(request.status >= 400){
                   console.log('error send');
