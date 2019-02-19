@@ -130,16 +130,18 @@ function tokenRecieved(e) {
                 window.location.href = "/";
               }
               if(request.status >= 400){
+                  console.log('error send');
+                  
                 window.location.href = "/wialon";
               }
              });
              request.send(user);
          });
     
-         document.getElementById("btn-reg").addEventListener("click", function (e) {
-             e.preventDefault();
-             window.location.href = "/signup";
-         })
+        //  document.getElementById("btn-reg").addEventListener("click", function (e) {
+        //      e.preventDefault();
+        //      window.location.href = "/signup";
+        //  })
     </script>
 
 </body>

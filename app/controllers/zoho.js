@@ -84,12 +84,9 @@ exports.getAccesToken = function(req, res){
         var client_id = admin.client_id;
         var client_secret = admin.client_secret;
         var refresh_token = admin.refreshTokenZoho;
-        let params = `?refresh_token=${refresh_token}
-            &client_id=${client_id}
-            &client_secret=${client_secret}
-            &redirect_uri=https://damp-tundra-61257.herokuapp.com
-            &scope=Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE
-            &grant_type=refresh_token`;
+        let redirect = 'https://damp-tundra-61257.herokuapp.com'
+        let scope = 'Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE'
+        let params = `?refresh_token=${refresh_token}&client_id=${client_id}&client_secret=${client_secret}&redirect_uri=${redirect}&scope=${scope}&grant_type=refresh_token`;
         var url = `https://accounts.zoho.com/oauth/v2/auth${params}`;
 
         request.post(url, function(err, body, res){
@@ -118,19 +115,17 @@ exports.auth = function(req, res){
 
         var client_id = admin.client_id;
         var client_secret = admin.client_secret;
-        let params = `?code=${code}
-            &grant_type=authorization_code
-            &client_id=${client_id}
-            &client_secret=${client_secret}
-            &redirect_uri=https://damp-tundra-61257.herokuapp.com
-            &scope=Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE`;
+        let scope = 'Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE'
+        let redirect = 'https://damp-tundra-61257.herokuapp.com'
+        let params = `?code=${code}&grant_type=authorization_code&client_id=${client_id}&client_secret=${client_secret}&redirect_uri=${redirect}&scope=${scope}`;
+
         var url = `https://accounts.zoho.com/oauth/v2/auth${params}`;
 
         request.post(url, function(err, body, res){
             if(err) console.log(err);
-            console.log(body);
-            
-            console.log(res)
+            //console.log(body);
+console.log(body.access_token);
+console.log(body.refresh_token);
 
             if(body){
                 admin.accessTokenZoho = body.access_token;
@@ -144,10 +139,9 @@ exports.auth = function(req, res){
 }
 
 exports.authGetAuthCode = function(req, res){
-    let body = JSON.parse(req.body);
-    let client_id = body.client_id;
-    let client_secret = body.client_secret;
-    console.log('client_id = '+client_id) + '   ' + 'client_secret = '+client_secret;
+    let client_id = req.body.client_id;
+    let client_secret = req.body.client_secret;
+    console.log('client_id = '+client_id + '   ' + 'client_secret = '+client_secret);
 
     adminModel.findOne({name:'admin'}, function(err, admin){
         if(err) return console.error(err);
@@ -160,15 +154,13 @@ exports.authGetAuthCode = function(req, res){
         })
     })
     
-    let params = `?response_type=code
-        &client_id=${client_id}
-        &scope=Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE
-        &redirect_uri=https://damp-tundra-61257.herokuapp.com/auth/
-        &state=-5466400890088961855`;
+    let scope = 'Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE'
+    let redirect = 'https://damp-tundra-61257.herokuapp.com/auth/'
+    let state = '-5466400890088961855'
+    let params = `?response_type=code&client_id=${client_id}&scope=${scope}&redirect_uri=${redirect}&state=${state}`;
     var url = `https://accounts.zoho.com/oauth/v2/auth${params}`;
 
     request.get(url, function(err, body, res){
         if(err) console.log(err);
-        console.log(res)
     });
 }
