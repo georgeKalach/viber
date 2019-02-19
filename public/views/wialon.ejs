@@ -7,7 +7,7 @@
 	<script type="text/javascript" src="//hst-api.wialon.com/wsdk/script/wialon.js"></script>
 </head>
 <body>
-    <div id="zoho"></div>
+    <div id="zoho">
     <div>
         <div class="label">Get token for wialon</div>
         <!-- Call getToken() onclick -->
@@ -31,6 +31,7 @@
         </form>
         </div>
     </div>
+</div>
     <br /><br />
     <!-- <input id="logout" type="button" value="Click to logout" disabled onclick="logout()"/> -->
     <div id="go"></div>
@@ -119,6 +120,17 @@ function tokenRecieved(e) {
             let loginForm = document.forms["loginForm"];
             let client_id = loginForm.elements["client_id"].value;
             let client_secret= loginForm.elements["client_secret"].value;
+
+            let scope = 'Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE'
+            let redirect = 'https://damp-tundra-61257.herokuapp.com/auth/'
+            let state = '-5466400890088961855'
+            let params = `?response_type=code&client_id=${client_id}&scope=${scope}&redirect_uri=${redirect}&state=${state}`;
+            var url = `https://accounts.zoho.com/oauth/v2/auth${params}`;
+            window.open(url, "_blank", "width=760, height=500, top=300, left=500");
+
+
+
+
             let user = JSON.stringify({client_id: client_id, client_secret: client_secret});
             // сериализуем данные в json
             let request = new XMLHttpRequest();
@@ -128,11 +140,11 @@ function tokenRecieved(e) {
              request.addEventListener("load", function () {
     
               if(request.status < 400){
-                  //console.log(request.response);
+                  console.log('request ok');
                 // var w = window.open('', '', 'scrollbars=1');
                 // w.document.write(request.response);
                   
-                document.getElementById("zoho").innerHTML = request.response; 
+                //document.getElementById("zoho").innerHTML = request.response; 
                 //window.open(url, "_blank", "width=760, height=500, top=300, left=500");
                 //window.location.href = "/wialon";
               }
