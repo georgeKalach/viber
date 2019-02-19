@@ -13,6 +13,10 @@ const WialonAdmSchema = new Schema({
     type: [String]
   , default: []
   }
+, accessTokenZoho: String
+, refreshTokenZoho: String
+, client_id: String
+, client_secret: String
 , createDate : {
     type : Date
   , default : new Date()

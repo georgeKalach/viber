@@ -3,15 +3,35 @@
 <head>
     <meta charset="utf-8" />
     <title>How to get token</title>
+    <link rel="stylesheet" href="./css/wialon.css">
 	<script type="text/javascript" src="//hst-api.wialon.com/wsdk/script/wialon.js"></script>
 </head>
 <body>
-    <!-- Call getToken() onclick -->
-	<input id="login" type="button" value="Click to open login page" onclick="getToken()"/>
-    <!-- Print token here-->
-    Your token: <span id="token"></span>
+    <div>
+        <div class="label">Get token for wialon</div>
+        <!-- Call getToken() onclick -->
+        <input id="login" type="button" value="Click to open login page" onclick="getToken()"/>
+        <!-- Print token here-->
+        Your token: <span id="token"></span>
+    </div>
+    <div class="form-header">
+        <div>Get token for Zoho desk</div>
+        <div class="conteinerForm">
+        <form name="loginForm" class="form-login"  method="post" action="/registr" novalidate>
+            <div class="form-field">
+                <label class="label" for="client_id">enter youre client_id</label>
+                <input class="input" id="client_id" name="client_id" type="client_id" value="" />
+                <label class="label" for="client_id">enter youre secret_code</label>
+                <input class="input" id="client_secret" name="client_secret" type="client_secret" value="" />
+            </div>
+            <div class="form-actions">
+                <button id="btn-login" class="btn" type="submit">Sign in</button>
+            </div>
+        </form>
+        </div>
+    </div>
     <br /><br />
-    <input id="logout" type="button" value="Click to logout" disabled onclick="logout()"/>
+    <!-- <input id="logout" type="button" value="Click to logout" disabled onclick="logout()"/> -->
     <div id="go"></div>
     <script>
     // Wialon site dns
@@ -58,7 +78,7 @@ function tokenRecieved(e) {
          request.addEventListener("load", function () {
           if(request.status < 400){
             window.removeEventListener("message", tokenRecieved);
-            window.location.href = "/chat";
+            window.location.href = "/";
           }
           if(request.status >= 400){
             window.removeEventListener("message", tokenRecieved);
@@ -79,15 +99,48 @@ function tokenRecieved(e) {
     }
 }
 
-function logout() {
-    var sess = wialon.core.Session.getInstance();
-	if (sess && sess.getId()) {
-    	sess.logout(function() {
-            document.getElementById("logout").setAttribute("disabled", "");
-            document.getElementById("login").removeAttribute("disabled");
-        });
-    }
-}
+// function logout() {
+//     var sess = wialon.core.Session.getInstance();
+// 	if (sess && sess.getId()) {
+//     	sess.logout(function() {
+//             document.getElementById("logout").setAttribute("disabled", "");
+//             document.getElementById("login").removeAttribute("disabled");
+//         });
+//     }
+// }
     </script>
+
+<script>
+ 
+        document.getElementById("btn-login").addEventListener("click", function (e) {
+             e.preventDefault();
+            // получаем данные формы
+            let loginForm = document.forms["loginForm"];
+            let client_id = loginForm.elements["client_id"].value;
+            let client_secret= loginForm.elements["client_secret"].value;
+            let user = JSON.stringify({client_id: client_id, client_secret: client_secret});
+            // сериализуем данные в json
+            let request = new XMLHttpRequest();
+            // посылаем запрос на адрес "/user"
+             request.open("POST", "/auth/getcode", true);   
+             request.setRequestHeader("Content-Type", "application/json");
+             request.addEventListener("load", function () {
+    
+              if(request.status < 400){
+                window.location.href = "/";
+              }
+              if(request.status >= 400){
+                window.location.href = "/wialon";
+              }
+             });
+             request.send(user);
+         });
+    
+         document.getElementById("btn-reg").addEventListener("click", function (e) {
+             e.preventDefault();
+             window.location.href = "/signup";
+         })
+    </script>
+
 </body>
 </html>

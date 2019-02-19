@@ -36,6 +36,13 @@ module.exports = function (app, passport, bot) {
 
 	app.post('/zoho', zohos.forwardToViber)
 
+	app.post('/zoho', zohos.forwardToViber)
+
+	app.get('/auth', zohos.auth)
+
+	app.post('/auth/getcode', zohos.authGetAuthCode)
+	app.post('/auth/accestoken', zohos.getAccesToken)
+
 	bot.on(BotEvents.SUBSCRIBED,  response => {
 		users.createUser(response);
 		response.send(new TextMessage(`Hi ${response.userProfile.name}. I am ${bot.name}\nPlease write youre phone associated with wialon`))

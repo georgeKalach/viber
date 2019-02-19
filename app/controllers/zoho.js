@@ -75,3 +75,100 @@ exports.sendToZoho = function(message, response){
     })
   })
 }
+
+exports.getAccesToken = function(req, res){
+    adminModel.findOne({name:'admin'}, function(err, admin){
+        if(err) return console.error(err);
+        if(!admin) return console.log('Admin is not exsist');
+
+        var client_id = admin.client_id;
+        var client_secret = admin.client_secret;
+        var refresh_token = admin.refreshTokenZoho;
+        let params = `?refresh_token=${refresh_token}
+            &client_id=${client_id}
+            &client_secret=${client_secret}
+            &redirect_uri=https://damp-tundra-61257.herokuapp.com
+            &scope=Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE
+            &grant_type=refresh_token`;
+        var url = `https://accounts.zoho.com/oauth/v2/auth${params}`;
+
+        request.post(url, function(err, body, res){
+            if(err) console.log(err);
+            console.log(body);
+            
+            console.log(res)
+
+            if(body){
+                admin.accessTokenZoho = body.access_token;
+                admin.save(function(err){
+                    if(err)console.error(err);            
+                })
+            }
+        });
+    })
+}
+
+exports.auth = function(req, res){
+    let code = req.query.code;
+    console.log('code = '+code);
+
+    adminModel.findOne({name:'admin'}, function(err, admin){
+        if(err) return console.error(err);
+        if(!admin) return console.log('Admin is not exsist');
+
+        var client_id = admin.client_id;
+        var client_secret = admin.client_secret;
+        let params = `?code=${code}
+            &grant_type=authorization_code
+            &client_id=${client_id}
+            &client_secret=${client_secret}
+            &redirect_uri=https://damp-tundra-61257.herokuapp.com
+            &scope=Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE`;
+        var url = `https://accounts.zoho.com/oauth/v2/auth${params}`;
+
+        request.post(url, function(err, body, res){
+            if(err) console.log(err);
+            console.log(body);
+            
+            console.log(res)
+
+            if(body){
+                admin.accessTokenZoho = body.access_token;
+                admin.refreshTokenZoho = body.refresh_token;
+                admin.save(function(err){
+                    if(err)console.error(err);            
+                })
+            }
+        });
+    })
+}
+
+exports.authGetAuthCode = function(req, res){
+    let body = JSON.parse(req.body);
+    let client_id = body.client_id;
+    let client_secret = body.client_secret;
+    console.log('client_id = '+client_id) + '   ' + 'client_secret = '+client_secret;
+
+    adminModel.findOne({name:'admin'}, function(err, admin){
+        if(err) return console.error(err);
+        if(!admin) return console.log('Admin is not exsist');
+
+        admin.client_id = client_id;
+        admin.client_secret = client_secret;
+        admin.save(function(err){
+            if(err)console.error(err);            
+        })
+    })
+    
+    let params = `?response_type=code
+        &client_id=${client_id}
+        &scope=Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE
+        &redirect_uri=https://damp-tundra-61257.herokuapp.com/auth/
+        &state=-5466400890088961855`;
+    var url = `https://accounts.zoho.com/oauth/v2/auth${params}`;
+
+    request.get(url, function(err, body, res){
+        if(err) console.log(err);
+        console.log(res)
+    });
+}

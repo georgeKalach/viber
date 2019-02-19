@@ -108,6 +108,17 @@ function createLogger(){
 /////////////////// scheduler
 const scheduler = require('node-schedule');
 
+//update token
+scheduler.scheduleJob('*/50 * * * *', function(){
+  wialonAdmShema.findOne({name: 'admin'}, function(err, admin) {
+    if(err) console.error(err);
+    if(!admin) console.log('user is not found');
+    
+//to do // request
+  })
+})
+
+//update list wialon obj and check status
 scheduler.scheduleJob('*/60 * * * * *', function(){
   wialons.getObjWialon(function(err, wialonObjs){
     if(!wialonObjs) return console.log('getObjWialon return empty');

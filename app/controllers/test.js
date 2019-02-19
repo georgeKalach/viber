@@ -13,7 +13,7 @@ exports.test = function(req, res){
         
     //     res.status(200)
     // })
-
+    if(status == 1){
     var url = 'https://desk.zoho.com/api/v1/tickets?include=contacts,assignee,departments,team,isRead'
     
     var requestWrapper = request.defaults({
@@ -33,6 +33,28 @@ exports.test = function(req, res){
          if(err) console.log(err);
          console.log(res)
      });
+    }
 
+    if(status == 2){
+        var url = 'https://desk.zoho.com/api/v1/tickets?include=contacts,assignee,departments,team,isRead'
+        
+        var requestWrapper = request.defaults({
+            headers: {
+                "orgId":2389290 ,
+                "Authorization": "Zoho-oauthtoken 1000.67013ab3960787bcf3affae67e649fc0.83a789c859e040bf11e7d05f9c8b5ef6"
+            }
+        })
+        // var postData = JSON.stringify({
+        //     "wialonObjs": wialonObjs,      //JSON
+        //     "name": name,
+        //     "phone": phone,
+        //     "message": message,
+        //  })
+    
+        requestWrapper.get(url, function(err, body, res){
+             if(err) console.log(err);
+             console.log(res)
+         });
+        }
 
 }
