@@ -153,5 +153,6 @@ exports.authGetAuthCode = function(req, res){
         admin.save(function(err){
             if(err)console.error(err);            
         })
+        res.status(200);
     })
 }

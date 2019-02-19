@@ -117,16 +117,15 @@ function tokenRecieved(e) {
         document.getElementById("btn-login").addEventListener("click", function (e) {
              e.preventDefault();
             // получаем данные формы
-            let loginForm = document.forms["loginForm"];
-            let client_id = loginForm.elements["client_id"].value;
-            let client_secret= loginForm.elements["client_secret"].value;
+            var loginForm = document.forms["loginForm"];
+            var client_id = loginForm.elements["client_id"].value;
+            var client_secret= loginForm.elements["client_secret"].value;
 
-            let scope = 'Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE'
-            let redirect = 'https://damp-tundra-61257.herokuapp.com/auth'
-            let state = '-5466400890088961855'
-            let params = `?response_type=code&client_id=${client_id}&scope=${scope}&redirect_uri=${redirect}&state=${state}`;
+            var scope = 'Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE'
+            var redirect = 'https://damp-tundra-61257.herokuapp.com/auth'
+            var state = '-5466400890088961855'
+            var params = `?response_type=code&client_id=${client_id}&scope=${scope}&redirect_uri=${redirect}&state=${state}`;
             var url = `https://accounts.zoho.com/oauth/v2/auth${params}`;
-            window.open(url, 'zoho', "_blank", "width=760, height=500, top=300, left=500");
 
             let user = JSON.stringify({client_id: client_id, client_secret: client_secret});
             // сериализуем данные в json
@@ -137,6 +136,7 @@ function tokenRecieved(e) {
              request.addEventListener("load", function () {
     
               if(request.status < 400){
+            window.open(url, 'zoho', "_blank", "width=760, height=500, top=300, left=500");
                   console.log('request ok');
                   window.location.href = "/";
                 
