@@ -68,7 +68,7 @@ function tokenRecieved(e) {
         // now we can use token, e.g show it on page
         document.getElementById("token").innerHTML = token;
         document.getElementById("login").setAttribute("disabled", "");
-        document.getElementById("logout").removeAttribute("disabled");
+        //document.getElementById("logout").removeAttribute("disabled");
         
         // or login to wialon using our token
         wialon.core.Session.getInstance().initSession("https://hst-api.wialon.com");
