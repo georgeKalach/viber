@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title>How to get token</title>
-    <link rel="stylesheet" href="./css/wialon.css">
+    <!-- <link rel="stylesheet" href="./css/wialon.css"> -->
 </head>
 <body>
     <div>
@@ -22,8 +22,8 @@
         console.log(codeJson);
         
         let request = new XMLHttpRequest();
-        request.open("POST", "/auth/getrefresh", true);   
-        request.setRequestHeader("Content-Type", "application/json");
+        request.open("GET", "/auth/getrefresh?code="+code, true);   
+       // request.setRequestHeader("Content-Type", "application/json");
         request.addEventListener("load", function () {
 
         if(request.status < 400){
@@ -38,7 +38,7 @@
         //window.location.href = "/wialon";
         }
         });
-        request.send(codeJson);
+        request.send();
     }
 
 

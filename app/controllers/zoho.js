@@ -108,7 +108,7 @@ exports.getAccesToken = function(req, res){
 exports.auth = function(req, res){
     console.log('/////////////////////////////////////////////');
     
-    let code = req.body.code//query.code;
+    let code = req.query.code;
     console.log('code = '+code);
 
     adminModel.findOne({name:'admin'}, function(err, admin){
