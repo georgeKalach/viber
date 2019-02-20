@@ -106,7 +106,7 @@ exports.getAccesToken = function(req, res){
 }
 
 exports.auth = function(req, res){
-    let code = req.query.code;
+    let code = req.body.code//query.code;
     console.log('code = '+code);
 
     adminModel.findOne({name:'admin'}, function(err, admin){
@@ -134,7 +134,7 @@ console.log(body.refresh_token);
                     if(err)console.error(err);            
                 })
             }
-            res.redirect('/');
+            res.status(200).send('get refresh');
         });
     })
 }

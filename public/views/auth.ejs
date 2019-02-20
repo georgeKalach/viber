@@ -12,31 +12,32 @@
 
     </div>
 
-<!-- <script>
+<script>
     document.addEventListener("DOMContentLoaded", ready);
 
     function ready(){
+        let url_string = window.location.href;
+        let url = new URL(url_string);
+        let code = url.searchParams.get('code')
+        let codeJson = JSON.stringify({code: code})
+        let request = new XMLHttpRequest();
+        request.open("POST", "/auth/getrefresh", true);   
+        request.setRequestHeader("Content-Type", "application/json");
+        request.addEventListener("load", function () {
 
-        let user = JSON.stringify({client_id: client_id, client_secret: client_secret});
-            // сериализуем данные в json
-            let request = new XMLHttpRequest();
-            // посылаем запрос на адрес "/user"
-             request.open("POST", "/auth/getcode", true);   
-             request.setRequestHeader("Content-Type", "application/json");
-             request.addEventListener("load", function () {
-    
-              if(request.status < 400){
-                  console.log('request ok');
-                  window.location.href = "/";
-                
-              }
-              if(request.status >= 400){
-                  console.log('error send');
-                  
-                window.location.href = "/wialon";
-              }
-             });
-             request.send(user);
+        if(request.status < 400){
+            console.log('request ok');
+            window.close()
+            //window.location.href = "/";
+        
+        }
+        if(request.status >= 400){
+            console.log('error send');
+            
+        window.location.href = "/wialon";
+        }
+        });
+        request.send(code);
     }
 
 
@@ -55,7 +56,7 @@
             window.open(url, "_blank", "width=760, height=500, top=300, left=500");
 
          });
-    </script> -->
+    </script>
 
 </body>
 </html>

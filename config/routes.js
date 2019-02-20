@@ -36,13 +36,8 @@ module.exports = function (app, passport, bot) {
 
 	app.post('/zoho', zohos.forwardToViber)
 
-	//app.post('/zoho', zohos.forwardToViber)
-
+	app.get('/auth/getrefresh', zohos.auth)
 	app.get('/auth/getcode*', function(req, res){
-		console.log('//////////////////// nooooo half /////////////////////////');
-		zohos.auth(req, res);
-console.log('//////////////////// half /////////////////////////');
-
 		res.render('auth')
 	})
 	app.post('/auth/saveclient', zohos.authGetAuthCode)
