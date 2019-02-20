@@ -4,7 +4,6 @@
     <meta charset="utf-8" />
     <title>How to get token</title>
     <link rel="stylesheet" href="./css/wialon.css">
-	<script type="text/javascript" src="//hst-api.wialon.com/wsdk/script/wialon.js"></script>
 </head>
 <body>
     <div>
@@ -32,9 +31,9 @@
         
         }
         if(request.status >= 400){
-            console.log('error send');
+            console.log(request);
             
-        window.location.href = "/wialon";
+        //window.location.href = "/wialon";
         }
         });
         request.send(codeJson);
