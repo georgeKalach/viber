@@ -102,7 +102,7 @@ console.log('//////////////////// half /////////////////////////');
 		}
 		console.error(err.stack);
 		// error page
-		res.status(500).send('ERR500');
+		res.status(500).send('ERROR500'+err);
 	});
 
 	// assume 404 since no middleware responded

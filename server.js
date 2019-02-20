@@ -125,7 +125,7 @@ scheduler.scheduleJob('*/60 * * * * *', function(){
     
     usersModel.find(function(err, userObjs){
       if(err) return console.log(err);
-      if(!userObjs[0]) return console.error('Users not found');
+      if(!userObjs[0]) console.error('Users not found');
 
         async.waterfall([
           function(callback){    //remove the object if it dose not exist in the wialon
