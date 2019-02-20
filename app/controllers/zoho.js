@@ -126,7 +126,7 @@ exports.authRefresh = function(req, res, next){
         request.post(url, function(err, body, res){
             if(err) console.log(err);
             console.log(body);
-            console.log(res);
+            //console.log(res);
             //console.log(body.access_token);
 //console.log(body.refresh_token);
 
