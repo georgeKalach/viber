@@ -106,6 +106,8 @@ exports.getAccesToken = function(req, res){
 }
 
 exports.auth = function(req, res){
+    console.log('/////////////////////////////////////////////');
+    
     let code = req.body.code//query.code;
     console.log('code = '+code);
 
