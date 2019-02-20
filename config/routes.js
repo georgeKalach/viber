@@ -40,7 +40,9 @@ module.exports = function (app, passport, bot) {
 	// app.get('/auth/getcode*', function(req, res){
 	// 	res.render('auth')
 	// })
-	app.get('/auth/getcode*', zohos.authRefresh)
+	app.get('/auth/getcode*', zohos.authRefresh(req, res, next), function(req, res){
+		res.render('auth')
+	})
 	app.post('/auth/saveclient', zohos.authGetAuthCode)
 	app.post('/auth/accestoken', zohos.getAccesToken)
 

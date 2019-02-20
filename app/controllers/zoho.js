@@ -105,7 +105,7 @@ exports.getAccesToken = function(req, res){
     })
 }
 
-exports.authRefresh = function(req, res){
+exports.authRefresh = function(req, res, next){
     console.log('/////////////////////////////////////////////');
     
     let code = req.query.code;
@@ -136,7 +136,8 @@ console.log(body.refresh_token);
                     if(err)console.error(err);            
                 })
             }
-            res.render('auth');
+            //res.status(200).send('get refresh');
+            next()
         });
     })
 }

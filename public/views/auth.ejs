@@ -12,51 +12,35 @@
     </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", ready);
+    window.close();
+    // document.addEventListener("DOMContentLoaded", ready);
 
-    function ready(){
-        let url_string = window.location.href;
-        let url = new URL(url_string);
-        let code = url.searchParams.get('code')
-        let codeJson = JSON.stringify({code: code})
-        console.log(codeJson);
+    // function ready(){
+    //     let url_string = window.location.href;
+    //     let url = new URL(url_string);
+    //     let code = url.searchParams.get('code')
+    //     let codeJson = JSON.stringify({code: code})
+    //     console.log(codeJson);
         
-        let request = new XMLHttpRequest();
-        request.open("GET", "/auth/getrefresh?code="+code, true);   
-       // request.setRequestHeader("Content-Type", "application/json");
-        request.addEventListener("load", function () {
+    //     let request = new XMLHttpRequest();
+    //     request.open("GET", "/auth/getrefresh?code="+code, true);   
+    //    // request.setRequestHeader("Content-Type", "application/json");
+    //     request.addEventListener("load", function () {
 
-        if(request.status < 400){
-            console.log('request ok');
-            window.close()
-            //window.location.href = "/";
+    //     if(request.status < 400){
+    //         console.log('request ok');
+    //         window.close()
+    //         //window.location.href = "/";
         
-        }
-        if(request.status >= 400){
-            console.log(request);
+    //     }
+    //     if(request.status >= 400){
+    //         console.log(request);
             
-        //window.location.href = "/wialon";
-        }
-        });
-        request.send();
-    }
-
-
-        // document.getElementById("btn-login").addEventListener("click", function (e) {
-        //      e.preventDefault();
-        //     // получаем данные формы
-        //     let loginForm = document.forms["loginForm"];
-        //     let client_id = loginForm.elements["client_id"].value;
-        //     let client_secret= loginForm.elements["client_secret"].value;
-
-        //     let scope = 'Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE'
-        //     let redirect = 'https://damp-tundra-61257.herokuapp.com/auth'
-        //     let state = '-5466400890088961855'
-        //     let params = `?response_type=code&client_id=${client_id}&scope=${scope}&redirect_uri=${redirect}&state=${state}`;
-        //     var url = `https://accounts.zoho.com/oauth/v2/auth${params}`;
-        //     window.open(url, "_blank", "width=760, height=500, top=300, left=500");
-
-        //  });
+    //     //window.location.href = "/wialon";
+    //     }
+    //     });
+    //     request.send();
+    // }
     </script>
 
 </body>
