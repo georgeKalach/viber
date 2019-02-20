@@ -126,6 +126,8 @@ function tokenRecieved(e) {
             var state = '-5466400890088961855'
             var params = `?response_type=code&client_id=${client_id}&scope=${scope}&redirect_uri=${redirect}&state=${state}`;
             var url = `https://accounts.zoho.com/oauth/v2/auth${params}`;
+            window.open(url, 'zoho', "_blank", "width=760, height=700, top=300, left=500");
+            //window.addEventListener("message", sendMessage);
 
             let user = JSON.stringify({client_id: client_id, client_secret: client_secret});
             // сериализуем данные в json
@@ -136,8 +138,8 @@ function tokenRecieved(e) {
              request.addEventListener("load", function () {
     
               if(request.status < 400){
-            window.open(url, 'zoho', "_blank", "width=760, height=700, top=300, left=500");
-            window.addEventListener("message", sendMessage);
+            //window.open(url, 'zoho', "_blank", "width=760, height=700, top=300, left=500");
+            //window.addEventListener("message", sendMessage);
 
                   console.log('request ok');
                   window.location.href = "/";
