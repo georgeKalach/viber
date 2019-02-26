@@ -23,6 +23,7 @@ exports.wialonCreate = function(name, token){
     })
 }
 
+//function get all wialon objs
 exports.getObjWialon = function(callback){
     wialonAdmShema.findOne({name : 'admin'}, function(err, obj){
         if(err) return console.error(err);
@@ -49,7 +50,6 @@ exports.getObjWialon = function(callback){
         request(url, function(err, res, body){
           if(err) return console.error(err);
           if(~body.indexOf('"error":1')){
-
             let urlSid = `${host}/wialon/ajax.html?svc=token/login&params={"token":"${token}"}`;
             request(urlSid, function(err, resSid, bodySid){            //get new sid
               if(err) return console.error(err);          
@@ -58,15 +58,38 @@ exports.getObjWialon = function(callback){
                 if(err) console.error(err);
               })
             })
-            
           }
+		  if(!body) {
+				console.log("objects wialon is not exsist");
+				return callback(err, null);
+			} 
           var objects = JSON.parse(body).items;
-          var wialonObjs = JSON.stringify(objects);
+			if(!objects) {
+				console.log("objects wialon is not exsist");
+				return callback(err, null);
+			}
+		  //sort // ------------------------------------
+			var noPhone = objects.filter(val => {
+				return !val.ph
+			})
+			
+			var wialonObjsParseNoPhone = objects.filter(val => {
+				return noPhone.indexOf(val) < 0
+			})
+			var noOnline = wialonObjsParseNoPhone.filter(val => {
+				return val.netconn === 0;
+			})
+			var online = wialonObjsParseNoPhone.filter(val => {
+				return val.netconn == 1;
+			})
+			var newWiParse = online.concat(noOnline, noPhone);
+			//-------------------------------------------
+          var wialonObjs = JSON.stringify(newWiParse);
           obj.wialonObjs = wialonObjs;
           obj.save(function(err){
             if(err) console.error(err);
           })
-          callback(err, objects)
+          callback(err, newWiParse)
         })
       })
 }

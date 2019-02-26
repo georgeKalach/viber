@@ -3,16 +3,22 @@
 var usersModel = require('../models/user');
 var wialons = require('./wialon')
 
-exports.createUser = function(res){
+exports.createUser = function(res, callback){
     usersModel.findOne({viberId : res.userProfile.id}, function(err, obj){
-        if(err) console.log(err);
-        if(obj) return console.log('obj is Exist');
+        if(err) return console.log(err);
+        if(obj) {
+			console.log('obj is Exist');
+			callback(null);
+			return;
+		}
+		console.log(res.userProfile.id);
         var newObj = {
             viberId : res.userProfile.id
         ,   name : res.userProfile.name
         ,   viberProfile : JSON.stringify(res.userProfile)
         }
         usersModel.create(newObj).catch(err => console.error(err));
+		callback(newObj);
     })
 }
 
@@ -59,6 +65,11 @@ exports.receivedMsg = function(message, res, wialoneStatus){
             if(!phone) return wialoneStatus(null, 'phone invalid');
             if(phone.length >= 10 && phone.length <= 13){               // check msg may be phone
                 phone = phone.substring(phone.length - 10);
+				user.phone = phone;
+				user.save(function(err){
+                    if(err) console.log(err);                    
+                })
+				return wialoneStatus(null, 'Thank you youre nomber is added');
             }else{
                 return wialoneStatus(null, 'phone invalid')
             }

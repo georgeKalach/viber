@@ -6,10 +6,6 @@ const UserSchema = new Schema({
   name: { type: String, default: '' },
   viberProfile: String,
   phone : Number,
-  // previousWialonStatus : {
-  //   type : Number,
-  //   default : 0
-  // },
   wialoneName: String,
   wialoneStatus: {
     type: Number,
@@ -19,6 +15,14 @@ const UserSchema = new Schema({
     type : Date
   , default : new Date()
   }
+, archive: {                      //json [{name: 'msg'}]
+	type: Array
+  , default: []
+  }     
+, todayMsg: {                      //json [{name, message, createDate}]
+	type: Array
+  , default: []
+  }    
 });
 
 

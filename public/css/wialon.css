@@ -1,3 +1,17 @@
+.wialon{
+    display: block;
+    width: 500px;
+    margin: 50px auto 0;
+    color: rgba(0,0,0,.8);
+}
+#login{
+    background: #e0e1e2 none;
+    color: rgba(0,0,0,.6);
+    font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+    margin: 10px .25em 0 0;
+    padding: 5px 15px;
+    font-weight: 700;
+}
 
 .conteinerForm{
     /* position: absolute; */

@@ -8,7 +8,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const config = require('./config');
-var wialons = require('./app/controllers/wialon')
+var wialons = require('./app/controllers/wialon');
+var zohos = require('./app/controllers/zoho')
 var usersModel = require('./app/models/user');
 var wialonAdmShema = require('./app/models/adminWialon')
 const models = join(__dirname, 'app/models');
@@ -20,7 +21,7 @@ const app = express();
 mongoose.Promise = require('bluebird');
 const connection = connect();
 
-const webhookUrl = 'https://damp-tundra-61257.herokuapp.com/';
+const webhookUrl = 'https://damp-tundra-61257.herokuapp.com';//'https://27d162a5.ngrok.io';
 const ViberBot  = require('viber-bot').Bot;
 
 var winston = require('winston');
@@ -108,13 +109,41 @@ function createLogger(){
 /////////////////// scheduler
 const scheduler = require('node-schedule');
 
-//update token
+//add to archive msg from chat. once a day
 scheduler.scheduleJob('*/50 * * * *', function(){
   wialonAdmShema.findOne({name: 'admin'}, function(err, admin) {
     if(err) console.error(err);
     if(!admin) console.log('user is not found');
     
-//to do // request
+//to do // add to archive msg from chat
+  })
+})
+
+//update token
+scheduler.scheduleJob('*/50 * * * *', function(){
+	 usersModel.find(function(err, users){
+		if(err) return console.error(err);
+		if(!users) return console.log('User is not exsist');
+		//------------ find user and save msg to archive -------------
+		var user;
+		users.forEach(user => {
+			if(user.todayMsg.length > 50){
+				let elArchive = user.todayMsg.splice(0, user.todayMsg.length - 20);
+				user.archive.push(elArchive);
+				usersModel.findOneAndUpdate({viberId: user.viberId}, {$set: {todayMsg: user.todayMsg, archive: user.archive}}, function(err){
+				if(err) console.log(err);
+			})
+			}
+		})
+	 })
+	
+	
+  wialonAdmShema.findOne({name: 'admin'}, function(err, admin) {
+    if(err) console.error(err);
+    if(!admin) console.log('user is not found');
+    
+//to do // request update token zoho
+//to do// check users db and del no exsist
   })
 })
 
@@ -142,9 +171,12 @@ scheduler.scheduleJob('*/60 * * * * *', function(){
                   }
                   if(i == wialonObjs.length){
                     admin.dateSendMsg.splice(j, 1);
-                    admin.save(function(err){
-                      if(err)console.log(err);   
-                    })
+					wialonAdmShema.findOneAndUpdate({name : 'admin'}, {$set: {dateSendMsg: admin.dateSendMsg}},function(err, admin){
+						if(err) return console.log(err);
+					})
+                    // admin.save(function(err){
+                      // if(err)console.log(err);   
+                    // })
                     break;
                   }
                 }
@@ -158,7 +190,7 @@ scheduler.scheduleJob('*/60 * * * * *', function(){
 
               if(wialonPhone) {  //check status if phone exist to wialon
                 wialonPhone = wialonPhone.substring(wialonPhone.length - 10);
-        //status change check
+				//----------------- status change check
                 for(var j = 0; j < userObjs.length; j++){
                   var userPhone = userObjs[j].phone;
 
@@ -167,9 +199,8 @@ scheduler.scheduleJob('*/60 * * * * *', function(){
                       userObjs[j].wialoneStatus = wialonObjs[i].netconn;
                       userObjs[j].save(function(err){
                         if(err) return console.log(err);
-                        console.log('userObjs[j].previousWialonStatus = ' + userObjs[j].wialoneStatus);
-          // to do //send to zoho msg about user online
-                        
+						//send to zoho msg about user online
+                        zohos.zohoOnload();
                       }); 
                     }
                     if(wialonObjs[i].netconn < userObjs[j].wialoneStatus){
@@ -192,7 +223,7 @@ scheduler.scheduleJob('*/60 * * * * *', function(){
           }
         ],function(err, result){
           if(err) console.log(err);
-          else console.log(result)
+          //else console.log(result)
         })
     })
   })
@@ -212,19 +243,23 @@ function phoneNotExsist(admin, wialonObj, cb){
     var objSendParse = JSON.parse(dateSendMsg[k]);
     var nowDate = new Date().getTime();
     var sendDate = new Date(objSendParse.date).getTime();
+	
     var deltaDay = Math.floor((nowDate - sendDate) / 1000/60/60/24);
     
     if(wialonObj.nm == objSendParse.name){         //send one letter per two day
       if(deltaDay >= 2){
 //to do // here send to zoho about field empty               
-console.log('here send to zoho about field empty');
+console.log('here send to zoho about field empty ' + objSendParse.name);
 
         objSendParse.date = new Date();
         dateSendMsg[k] = JSON.stringify(objSendParse);
         admin.dateSendMsg = dateSendMsg;
-        admin.save(function(err){
-          if(err) console.log(err);
-        })
+		wialonAdmShema.findOneAndUpdate({name: 'admin'}, { $set: {dateSendMsg: dateSendMsg}}, function(err, admin){
+			if(err) return console.log(err);
+		})
+        // admin.save(function(err){
+          // if(err) console.log(err);
+        // })
       }
       break;
     }
@@ -232,13 +267,13 @@ console.log('here send to zoho about field empty');
   if(k == dateSendMsg.length){        //if not found then add obj
     dateSendMsg.push(JSON.stringify({name : wialonObj.nm, date : new Date()}));
 //to do // here send to zoho about field empty               
-console.log('here send to zoho about field empty');
+console.log('here send to zoho about field empty///////////');
 
     admin.dateSendMsg = dateSendMsg;
     console.log(admin.dateSendMsg);
-    admin.save(function(err){
-      if(err) console.log(err);
-    })
+	wialonAdmShema.findOneAndUpdate({name: 'admin'}, { $set: {dateSendMsg: dateSendMsg}}, function(err, admin){
+		if(err) return console.log(err);
+	})
   }
   cb(null)
 }

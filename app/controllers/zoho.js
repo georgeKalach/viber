@@ -3,17 +3,57 @@
 const request = require('request');
 var usersModel = require('../models/user');
 var adminModel = require('../models/adminWialon');
+var chatModel = require('../models/chat');
 const constants = require('../../config/constants');
 
+//function to send messages to viber
 exports.forwardToViber = function(req, res){
 	var body = JSON.parse(req.body.message);
-    var phone = body.phone;
+    var name = body.name;
     var msg = body.message;
+	//console.log(msg)
 
-    usersModel.findOne({phone: phone}, function(err, user){
+    usersModel.findOne({wialoneName: name}, function(err, user){
         if(err) return console.log(err);
-        if(!user) return console.log('User is not exsist');
-        
+        if(!user) {
+			console.log('User is not exsist');
+			//send zoho about use is not exsist
+			var url = constants.URL_ZOHO + '/chat'
+		
+			// var requestWrapper = request.defaults({
+			//     headers: {'X-Viber-Auth-Token': constants.VIBER_AUTH}
+			// })
+			var postData = JSON.stringify({
+				"err": 'User is not exsist',
+				"name": name,
+				"message": 'I\'m sorry but there is no phone number for this object or the user is not registered',
+			 })
+		
+			 request.post(url, {form: {msg: postData}}, function(err, body, res){
+				 if(err) console.log(err);
+				 var resParse;
+				 console.log(res)
+			 });
+			return;
+		}
+		//----------- save msg to db -------------
+		var lastMsg = user.todayMsg[0] ? JSON.parse(user.todayMsg[user.todayMsg.length -1]) : undefined
+		var createDate = new Date();
+		if(lastMsg){
+			if(lastMsg.name == 'Support'){
+				lastMsg.message = lastMsg.message + '\n' + msg;
+				lastMsg = JSON.stringify(lastMsg);
+				user.todayMsg.pop();
+			}else{
+				lastMsg = JSON.stringify({name: "Support", message: msg, createDate: createDate});
+			}
+		}else lastMsg = JSON.stringify({name: "Support", message: msg, createDate: createDate});
+		user.todayMsg.push(lastMsg);
+		usersModel.findOneAndUpdate({viberId: user.viberId}, {$set: {todayMsg: user.todayMsg}}, function(err){
+			if(err) console.log(err);
+		})
+		
+		//-------------------------------------------
         var viberId = user.viberId;
         var url = 'https://chatapi.viber.com/pa/send_message';
         var requestWrapper = request.defaults({
@@ -30,52 +70,119 @@ exports.forwardToViber = function(req, res){
             "text": msg
          })
 
-         requestWrapper.post(url, {form: postData}, function(err, body, res){
-             if(err) console.log(err);
-             var resParse;
-             if(res) resParse = JSON.parse(res);
-             if(resParse.status == 4) return console.log('Message not send');
-			 if(resParse.status == 2) return console.log('Missing auth token');
+         requestWrapper.post(url, {form: postData}, function(err, body, response){
+             if(err) {
+				 console.log(err)
+				 var url = constants.URL_ZOHO + '/chat'
+		
+				// var requestWrapper = request.defaults({
+				//     headers: {'X-Viber-Auth-Token': constants.VIBER_AUTH}
+				// })
+				usersModel.findOne({wialoneName: name}, function(err, user1){
+					if(err) return console.log(err);
+					if(!user1) return console.log('User is not exsist');
+					
+					for(let i = user1.todayMsg.length - 1; i >= 0 ; i--){
+						var ell = JSON.parse(user1.todayMsg[i]);
+						
+						if(~ell.message.indexOf('\n')){
+							let arr = ell.message.split('\n');
+							let index = arr.indexOf(msg);
+							if(~index){
+								arr.splice(index + 1, 0, 'message not delivered');
+								ell.message = arr.join('\n');
+							}
+						}
+						else{
+							if(msg == ell.message){
+								ell.message = ell.message + '\n' + 'message not delivered';
+							}
+						}
+						user1.todayMsg.splice(i, 1, JSON.stringify(ell));
+						user1.save(function(err){
+							if(err) return console.log(err);
+						})
+					}
+				})
+				var postData = JSON.stringify({
+					"err": "ETIMEDOUT",
+					"name": name,
+					"message": msg,
+				 })
+			
+				 request.post(url, {form: {msg: postData}}, function(err, bodyr, resp){
+					 if(err) console.log(err);
+				 });
+			 }
          });
 
     })
 }
 
-exports.sendToZoho = function(message, response){
+//function to send messages to zoho
+exports.sendToZoho = function(mess, response){
+	var message = mess + 'noRead'
   var viberId = response.userProfile.id;
-
-  usersModel.findOne({viberId: viberId}, function(err, user){
+  var createDate = new Date();
+  usersModel.find(function(err, users){
     if(err) return console.error(err);
-    if(!user) return console.log('User is not exsist');
-
+    if(!users) return console.log('User is not exsist');
+	//------------ find user and collect all msg in one array -------------
+	var user;
+	var todayAllMsg = [];
+	users.forEach(val => {
+		if(viberId == val.viberId) {
+			user = val;
+			return;
+		}
+		todayAllMsg.push(JSON.stringify({name: val.wialoneName, todayMsg: val.todayMsg}));
+	})
+	//--------------- save to db new msg --------------------
+	var lastMsg = user.todayMsg[0] ? JSON.parse(user.todayMsg[user.todayMsg.length - 1]) : undefined;
+	if(lastMsg){
+		if(lastMsg.name != 'Support'){
+			lastMsg.message = lastMsg.message + '\n' + message;
+			lastMsg = JSON.stringify(lastMsg);
+			user.todayMsg.pop();
+		}else{
+			lastMsg = JSON.stringify({name: user.wialoneName, message: message, createDate: createDate});
+		}
+	}else lastMsg = JSON.stringify({name: user.wialoneName, message: message, createDate: createDate});
+	user.todayMsg.push(lastMsg);
+	usersModel.findOneAndUpdate({viberId: user.viberId}, {$set: {todayMsg: user.todayMsg}}, function(err){
+		if(err) console.log(err);
+	})
+	//-------------------------------------------
     adminModel.findOne({name: 'admin'}, function(err, admin){
         if(err) return console.error(err);
         if(!admin) return console.log('Admin is not exsist');
 
-        var phone = user.phone;
-        var name = user.wialoneName;
-        var wialonObjs = admin.wialonObjs;
-        var url = 'http://localhost:5000/chat'
-    
-        // var requestWrapper = request.defaults({
-        //     headers: {'X-Viber-Auth-Token': constants.VIBER_AUTH}
-        // })
-        var postData = JSON.stringify({
-            "wialonObjs": wialonObjs,      //JSON
-            "name": name,
-            "phone": phone,
-            "message": message,
-         })
-    
-         request.post(url, {form: {msg: postData}}, function(err, body, res){
-             if(err) console.log(err);
-             var resParse;
-             console.log(res)
-         });
+			var name = user.wialoneName;
+			var wialonObjs = admin.wialonObjs;
+			var todayMsg = JSON.stringify({name: user.wialoneName, todayMsg: user.todayMsg});
+			todayAllMsg.unshift(todayMsg);
+			var url = constants.URL_ZOHO + '/chat'
+		
+			// var requestWrapper = request.defaults({
+			//     headers: {'X-Viber-Auth-Token': constants.VIBER_AUTH}
+			// })
+			var postData = JSON.stringify({
+				"wialonObjs": wialonObjs,      //JSON
+				"name": name,
+				"message": message,
+				"todayAllMsg": todayAllMsg
+			 })
+		
+			 request.post(url, {form: {msg: postData}}, function(err, body, res){
+				 if(err) console.log(err);
+				 var resParse;
+				 console.log(res)
+			 });
     })
   })
 }
 
+//the function get access token. auth zoho
 exports.getAccesToken = function(req, res){
     adminModel.findOne({name:'admin'}, function(err, admin){
         if(err) return console.error(err);
@@ -105,6 +212,7 @@ exports.getAccesToken = function(req, res){
     })
 }
 
+//the function get refresh token. auth zoho
 exports.authRefresh = function(req, res, next){
     console.log('/////////////////////////////////////////////');
     
@@ -126,7 +234,7 @@ exports.authRefresh = function(req, res, next){
         request.post(url, function(err, response, body){
             if(err) console.error('//////////////// error post refresh //////////////////////');
             //console.log(body);
-            console.log(response);
+            //console.log(response);
             console.log('00000000000000000000000000000000000000000000');
             
         console.log(body.access_token);
@@ -145,6 +253,7 @@ console.log(body.refresh_token);
     })
 }
 
+//save function client_id && secret. auth zoho
 exports.authGetAuthCode = function(req, res){
     let client_id = req.body.client_id;
     let client_secret = req.body.client_secret;
@@ -161,4 +270,66 @@ exports.authGetAuthCode = function(req, res){
         })
         res.status(200).send('authGetAuthCode');
     })
+}
+
+//the function of sending chat messages when loading
+exports.zohoOnload = function(){
+  usersModel.find(function(err, users){
+    if(err) return console.error(err);
+    if(!users) return console.log('User is not exsist');
+	//------------ collect all msg in one array -------------
+	var todayAllMsg = [];
+	users.forEach(val => {
+		todayAllMsg.push(JSON.stringify({name: val.wialoneName, todayMsg: val.todayMsg}));
+	})
+	//-------------------------------------------
+    adminModel.findOne({name: 'admin'}, function(err, admin){
+        if(err) return console.error(err);
+        if(!admin) return console.log('Admin is not exsist');
+		
+		var wialonObjs = admin.wialonObjs;
+		var url = constants.URL_ZOHO + '/chat'
+	
+		// var requestWrapper = request.defaults({
+		//     headers: {'X-Viber-Auth-Token': constants.VIBER_AUTH}
+		// })
+		var postData = JSON.stringify({
+			"wialonObjs": wialonObjs,      //JSON
+			"todayAllMsg": todayAllMsg,
+			"name": "jorjTest"
+		 })
+	
+		 request.post(url, {form: {msg: postData}}, function(err, body, res){
+			 if(err) console.log(err);
+			 var resParse;
+			 console.log(res)
+		 });
+    })
+  })
+}
+
+//the function of changing the status of messages "read"
+exports.zohoSaveRead = function(req, res){
+    var name = req.body.msg['name'];
+	
+  usersModel.findOne({wialoneName: name}, function(err, user){
+    if(err) return console.error(err);
+    if(!user) return console.log('User is not exsist');
+	
+	for(let i = user.todayMsg.length - 1; i >= 0; i--){
+		console.log(user.todayMsg[i])
+		if(~user.todayMsg[i].indexOf('noRead')){
+			user.todayMsg[i] = user.todayMsg[i].replace(/noRead/g, 'readxx');
+			console.log('---------------'+user.todayMsg[i])
+		}else break;
+		
+	}
+	usersModel.findOneAndUpdate({viberId: user.viberId}, {$set: {todayMsg: user.todayMsg}}, function(err){
+		if(err) console.log(err);
+	})
+	// user.save(function(err){
+		// if(err) return console.error(err);
+		// console.log('0000000000000000')
+	// })
+  })
 }

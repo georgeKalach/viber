@@ -94,28 +94,6 @@ function test(){
                     .scrollTop(messages[0].scrollHeight);
         }
  
-        // socket.on('connecting', function () {
-        //     msg_system('Соединение...');
-        // });
- 
-        // socket.on('connect', function () {
-        //     socketId = socket.id;
-        //     msg_system('Соединение установлено!');
-        // });
- 
-        // socket.on('message', function (data) {
-        //     msg(data.name, data.message, data.id);
-        //     message_txt.focus();
-        // });
- 
-        // $("#message_btn").click(function () {
-        //     var text = $("#message_text").val();
-        //     if (text.length <= 0)
-        //         return;
-        //     message_txt.val("");
-        //     socket.emit("message", {message: text, name: name, id: socketId});
-        // });
- 
         function safe(str) {
             return str.replace(/&/g, '&amp;')
                .replace(/</g, '&lt;')
