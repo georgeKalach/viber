@@ -39,7 +39,7 @@ module.exports = function (app, passport, bot) {
 	app.get('/getchat', zohos.zohoOnload)
 	app.post('/zohoSaveRead', zohos.zohoSaveRead)
 
-	app.get('/auth/getrefresh*', zohos.authRefresh)
+	app.get('/auth/getrefresh', zohos.authRefresh)
 	// app.get('/auth/getcode*', function(req, res){
 	// 	res.render('auth')
 	// })
