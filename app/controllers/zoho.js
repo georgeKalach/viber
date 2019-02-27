@@ -230,8 +230,17 @@ exports.authRefresh = function(req, res, next){
         let params = `?code=${code}&grant_type=authorization_code&client_id=${client_id}&client_secret=${client_secret}&redirect_uri=${redirect}&scope=${scope}`;
 
         var url = `https://accounts.zoho.com/oauth/v2/auth${params}`;
+		
+		dataPost = {
+			"code": code,
+			"grant_type": "authorization_code",
+			"client_id": client_id,
+			"client_secret": client_secret,
+			"redirect_uri": "https://damp-tundra-61257.herokuapp.com",
+			"scope": scope,
+		}
 
-        request.post(url, function(err, body, response){
+        request.post(url, {form: dataPost} function(err, body, response){
             if(err) console.error('//////////////// error post refresh //////////////////////'+err);
 			console.log('00000000000000000000000000000000000000000000');
             console.log(body);
