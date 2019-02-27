@@ -12,35 +12,26 @@
     </div>
 
 <script>
-    window.close();
-    // document.addEventListener("DOMContentLoaded", ready);
+    
+         let request = new XMLHttpRequest();
+         request.open("GET", "/auth/getrefresh, true);   
+         request.setRequestHeader("Content-Type", "application/json");
+         request.addEventListener("load", function () {
 
-    // function ready(){
-    //     let url_string = window.location.href;
-    //     let url = new URL(url_string);
-    //     let code = url.searchParams.get('code')
-    //     let codeJson = JSON.stringify({code: code})
-    //     console.log(codeJson);
+         if(request.status < 400){
+             console.log('request ok');
+             window.close()
+             //window.location.href = "/";
         
-    //     let request = new XMLHttpRequest();
-    //     request.open("GET", "/auth/getrefresh?code="+code, true);   
-    //    // request.setRequestHeader("Content-Type", "application/json");
-    //     request.addEventListener("load", function () {
-
-    //     if(request.status < 400){
-    //         console.log('request ok');
-    //         window.close()
-    //         //window.location.href = "/";
-        
-    //     }
-    //     if(request.status >= 400){
-    //         console.log(request);
+         }
+         if(request.status >= 400){
+			console.log('---------- err -------------');
+             console.log(request);
             
-    //     //window.location.href = "/wialon";
-    //     }
-    //     });
-    //     request.send();
-    // }
+         //window.location.href = "/wialon";
+         }
+         });
+         request.send();
     </script>
 
 </body>

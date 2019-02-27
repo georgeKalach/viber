@@ -213,11 +213,11 @@ exports.getAccesToken = function(req, res){
 }
 
 //the function get refresh token. auth zoho
-exports.authRefresh = function(req, res, next){
+exports.authRefresh = function(req, res){
     console.log('/////////////////////////////////////////////');
     
-    let code = req.query.code;
-    console.log('code = '+code);
+    // let code = req.query.code;
+    // console.log('code = '+code);
 
     adminModel.findOne({name:'admin'}, function(err, admin){
         if(err) return console.error(err);
@@ -225,6 +225,7 @@ exports.authRefresh = function(req, res, next){
 
         var client_id = admin.client_id;
         var client_secret = admin.client_secret;
+		let code = admin.code;
         let scope = 'Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE'
         let redirect = 'https://damp-tundra-61257.herokuapp.com'
         let params = `?code=${code}&grant_type=authorization_code&client_id=${client_id}&client_secret=${client_secret}&redirect_uri=${redirect}&scope=${scope}`;
@@ -259,17 +260,16 @@ console.log(response.refresh_token);
                     if(err)console.error(err);            
                 })
             }
-            //res.status(200).send('get refresh');
-            next()
+            res.status(200).send('get refresh');
+            //next()
         });
     })
 }
 
 //save function client_id && secret. auth zoho
-exports.authGetAuthCode = function(req, res){
+exports.authGetClientId = function(req, res){
     let client_id = req.body.client_id;
     let client_secret = req.body.client_secret;
-    console.log('client_id = '+client_id + '   ' + 'client_secret = '+client_secret);
 
     adminModel.findOne({name:'admin'}, function(err, admin){
         if(err) return console.error(err);
@@ -281,6 +281,24 @@ exports.authGetAuthCode = function(req, res){
             if(err)console.error(err);            
         })
         res.status(200).send('authGetAuthCode');
+    })
+}
+
+//save function auth_code. auth zoho
+exports.authGetAuthCode = function(req, res, next){
+    let code = req.query.code;
+    console.log('code = '+code);
+
+    adminModel.findOne({name:'admin'}, function(err, admin){
+        if(err) return console.error(err);
+        if(!admin) return console.log('Admin is not exsist');
+
+        admin.code = code;
+        admin.save(function(err){
+            if(err)console.error(err);            
+        })
+		next();
+        //res.status(200).send('authGetAuthCode');
     })
 }
 

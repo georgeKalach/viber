@@ -17,6 +17,7 @@ const WialonAdmSchema = new Schema({
 , refreshTokenZoho: String
 , client_id: String
 , client_secret: String
+, code: String
 , createDate : {
     type : Date
   , default : new Date()
