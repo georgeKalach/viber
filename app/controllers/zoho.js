@@ -229,7 +229,7 @@ exports.authRefresh = function(req, res, next){
         let redirect = 'https://damp-tundra-61257.herokuapp.com'
         let params = `?code=${code}&grant_type=authorization_code&client_id=${client_id}&client_secret=${client_secret}&redirect_uri=${redirect}&scope=${scope}`;
 
-        var url = `https://accounts.zoho.com/oauth/v2/auth${params}`;
+        var url = `https://accounts.zoho.com/oauth/v2/auth`;
 		
 		dataPost = {
 			"code": code,
