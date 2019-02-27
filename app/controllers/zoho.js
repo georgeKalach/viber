@@ -240,7 +240,7 @@ exports.authRefresh = function(req, res, next){
 			"scope": scope,
 		}
 
-        request.post(url, {form: dataPost} function(err, body, response){
+        request.post(url, {form: dataPost}, function(err, body, response){
             if(err) console.error('//////////////// error post refresh //////////////////////'+err);
 			console.log('00000000000000000000000000000000000000000000');
             console.log(body);
