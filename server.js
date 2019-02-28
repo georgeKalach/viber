@@ -21,7 +21,7 @@ const app = express();
 mongoose.Promise = require('bluebird');
 const connection = connect();
 
-const webhookUrl = 'https://damp-tundra-61257.herokuapp.com';//'https://27d162a5.ngrok.io';
+const webhookUrl = 'https://damp-tundra-61257.herokuapp.com';
 const ViberBot  = require('viber-bot').Bot;
 
 var winston = require('winston');
