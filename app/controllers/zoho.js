@@ -161,7 +161,7 @@ exports.sendToZoho = function(mess, response){
 			var wialonObjs = admin.wialonObjs;
 			var todayMsg = JSON.stringify({name: user.wialoneName, todayMsg: user.todayMsg});
 			todayAllMsg.unshift(todayMsg);
-			var url = constants.URL_ZOHO + '/chat'
+			//var url = constants.URL_ZOHO + '/chat' + `?postdata=${postData}`
 		
 			// var requestWrapper = request.defaults({
 			//     headers: {'X-Viber-Auth-Token': constants.VIBER_AUTH}
@@ -172,6 +172,8 @@ exports.sendToZoho = function(mess, response){
 				"message": message,
 				"todayAllMsg": todayAllMsg
 			 })
+			 
+			 var url = constants.URL_ZOHO + '/chat' + `?postdata=${postData}`
 		
 			 request.post(url, {form: {msg: postData}}, function(err, body, res){
 				 if(err) console.log(err);
@@ -256,8 +258,8 @@ exports.authRefresh = function(req, res){
 console.log(response.refresh_token);
 
             if(body){
-                admin.accessTokenZoho = body.access_token;
-                admin.refreshTokenZoho = body.refresh_token;
+                admin.accessTokenZoho = response.access_token;
+                admin.refreshTokenZoho = response.refresh_token;
                 admin.save(function(err){
                     if(err)console.error(err);            
                 })
