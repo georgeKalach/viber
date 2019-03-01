@@ -175,7 +175,7 @@ exports.sendToZoho = function(mess, response){
 			 
 			 var url = constants.URL_ZOHO + '/chat' + `?postdata=${postData}`
 		
-			 request.post(url, {form: {msg: postData}}, function(err, body, res){
+			 request.post(url, function(err, body, res){
 				 if(err) console.log(err);
 				 console.log('------- body --------')
 				 console.log(body)
