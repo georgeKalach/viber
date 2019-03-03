@@ -161,7 +161,7 @@ exports.sendToZoho = function(mess, response){
 			var wialonObjs = admin.wialonObjs;
 			var todayMsg = JSON.stringify({name: user.wialoneName, todayMsg: user.todayMsg});
 			todayAllMsg.unshift(todayMsg);
-			//var url = constants.URL_ZOHO + '/chat' + `?postdata=${postData}`
+			var url = constants.URL_ZOHO + '/chat'
 		
 			// var requestWrapper = request.defaults({
 			//     headers: {'X-Viber-Auth-Token': constants.VIBER_AUTH}
@@ -172,10 +172,8 @@ exports.sendToZoho = function(mess, response){
 				"message": message,
 				"todayAllMsg": todayAllMsg
 			 })
-			 
-			 var url = constants.URL_ZOHO + '/chat' + `?postdata=${postData}`
 		
-			 request.post(url, function(err, body, res){
+			 request.post(url, {form: {msg: postData}}, function(err, body, res){
 				 if(err) console.log(err);
 				 console.log('------- body --------')
 				 console.log(body)
@@ -217,11 +215,11 @@ exports.getAccesToken = function(req, res){
 }
 
 //the function get refresh token. auth zoho
-exports.authRefresh = function(req, res){
+exports.authRefresh = function(req, res, next){
     console.log('/////////////////////////////////////////////');
     
-    // let code = req.query.code;
-    // console.log('code = '+code);
+    let code = req.query.code;
+    console.log('code = '+code);
 
     adminModel.findOne({name:'admin'}, function(err, admin){
         if(err) return console.error(err);
@@ -229,43 +227,32 @@ exports.authRefresh = function(req, res){
 
         var client_id = admin.client_id;
         var client_secret = admin.client_secret;
-		let code = admin.code;
         let scope = 'Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE'
         let redirect = 'https://damp-tundra-61257.herokuapp.com'
         let params = `?code=${code}&grant_type=authorization_code&client_id=${client_id}&client_secret=${client_secret}&redirect_uri=${redirect}&scope=${scope}`;
 
         var url = `https://accounts.zoho.com/oauth/v2/auth${params}`;
-		
-		// dataPost = {
-			// "code": code,
-			// "grant_type": "authorization_code",
-			// "client_id": client_id,
-			// "client_secret": client_secret,
-			// "redirect_uri": "https://damp-tundra-61257.herokuapp.com",
-			// "scope": scope,
-		// }
 
         request.post(url,  function(err, body, response){
-            if(err) console.error('//////////////// error post refresh //////////////////////'+err);
-			console.log('00000000000000000000000000000000000000000000');
+            if(err) console.error('////// error post refresh /////////'+err);
+			console.log('00000000000000000 body 000000000000000000000000000');
             console.log(body);
 			console.log('--------------------------------------------');
             console.log(response);
-            console.log('00000000000000000000000000000000000000000000');
+            console.log('000000000000000000000 response 00000000000000000000000');
 			console.log(url);
             
         console.log(response.access_token);
-console.log(response.refresh_token);
+		console.log(response.refresh_token);
 
-            if(body){
+            if(response){
                 admin.accessTokenZoho = response.access_token;
                 admin.refreshTokenZoho = response.refresh_token;
                 admin.save(function(err){
                     if(err)console.error(err);            
                 })
             }
-            res.status(200).send('get refresh');
-            //next()
+            next()
         });
     })
 }

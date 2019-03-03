@@ -22,33 +22,25 @@ module.exports = function (app, passport, bot) {
 		res.render('login')
 	});
 	app.post('/test', tests.test);
-
+	//------------- wialon route ------------------
 	app.get('/signup', function(req, res){
 		res.render('signup')
 	});
-	// app.get('/chat',  function(req, res){
-		// res.render('./chat')
-	// });
-
 	app.get('/wialon',  function(req, res){
 		res.render('wialon')
 	});
 	app.post('/wialon',  wialons.wialon);
-
+	//------------- zoho route ----------------
 	app.post('/zoho', zohos.forwardToViber)
 	app.get('/getchat', zohos.zohoOnload)
 	app.post('/zohoSaveRead', zohos.zohoSaveRead)
 
-	app.get('/auth/getrefresh', zohos.authRefresh)
-	// app.get('/auth/getcode*', function(req, res){
-	// 	res.render('auth')
-	// })
-	app.get('/auth/getcode*', zohos.authGetAuthCode, function(req, res){
+	app.get('/auth/getrefresh', zohos.authRefresh, function(req, res){
 		res.render('auth')
 	})
 	app.post('/auth/saveclient', zohos.authGetClientId)
 	app.post('/auth/accestoken', zohos.getAccesToken)
-
+	//---------- viber bot --------------
 	bot.on(BotEvents.SUBSCRIBED,  response => {
 		users.createUser(response);
 		response.send(new TextMessage(`Hi ${response.userProfile.name}. I am ${bot.name}\nPlease write youre phone associated with wialon`))
