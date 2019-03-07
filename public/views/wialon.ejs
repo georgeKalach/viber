@@ -118,11 +118,11 @@ function tokenRecieved(e) {
              e.preventDefault();
             // get form data
             var loginForm = document.forms["loginForm"];
-            var client_id = loginForm.elements["client_id"].value;
+            var clientId = loginForm.elements["client_id"].value;
             var client_secret= loginForm.elements["client_secret"].value;
 			// create url && params
             var scope = 'Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE'
-            var redirect = 'https://damp-tundra-61257.herokuapp.com/auth/getrefresh'
+            var redirectUri = 'https://damp-tundra-61257.herokuapp.com/auth/getrefresh'
 
 
 /******** replace below values with your own     ********/
