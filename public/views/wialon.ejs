@@ -153,6 +153,7 @@ let generatedOauthToken = null;
 <!-- } -->
 
 function initiateAuthorize(){
+console.log(`https://accounts.zoho.com/oauth/v2/auth?response_type=token&client_id=${clientId}&scope=${scope},Desk.articles.DELETE&redirect_uri=${redirectUri}&state=1234`)
     let authWindow = window.open(`https://accounts.zoho.com/oauth/v2/auth?response_type=token&client_id=${clientId}&scope=${scope},Desk.articles.DELETE&redirect_uri=${redirectUri}&state=1234`,
                             '_blank',
                             'width=500,height=500'
