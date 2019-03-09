@@ -196,7 +196,7 @@ function tokenRecieved(e) {
 
 
             var state = '-5466400890088961855'
-            var params = `?response_type=code&client_id=${client_id}&scope=${scope}&redirect_uri=${redirect}&state=${state}`;
+            var params = `?response_type=code&client_id=${client_id}&scope=${scope}&redirect_uri=${redirectUri}&state=${state}`;
             var url = `https://accounts.zoho.com/oauth/v2/auth${params}`;
             window.open(url, 'zoho', "_blank", "width=760, height=700, top=300, left=500");
 
