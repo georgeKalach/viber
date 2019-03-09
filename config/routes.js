@@ -26,7 +26,7 @@ module.exports = function (app, passport, bot) {
 	app.get('/signup', function(req, res){
 		res.render('signup')
 	});
-	app.get('/wialon*',  function(req, res){
+	app.get('/wialon',  function(req, res){
 		res.render('wialon')
 	});
 	app.post('/wialon',  wialons.wialon);
