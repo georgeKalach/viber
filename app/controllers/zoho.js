@@ -224,20 +224,18 @@ exports.authRefresh = function(req, res, next){
     adminModel.findOne({name:'admin'}, function(err, admin){
         if(err) return console.error(err);
         if(!admin) return console.log('Admin is not exsist');
+		if(admin.refreshTokenZoho) req.redirect('/');
 
         var client_id = admin.client_id;
         var client_secret = admin.client_secret;
         let scope = 'Desk.tickets.READ,Desk.basic.READ,Desk.tickets.CREATE,Desk.tickets.UPDATE'
-        let redirect = 'https://damp-tundra-61257.herokuapp.com'
+        let redirect = 'https://damp-tundra-61257.herokuapp.com/auth/getrefresh'
         let params = `?code=${code}&grant_type=authorization_code&client_id=${client_id}&client_secret=${client_secret}&redirect_uri=${redirect}&scope=${scope}`;
 
         var url = `https://accounts.zoho.com/oauth/v2/token${params}`;
 
         request.post(url,  function(err, body, response){
             if(err) console.error('////// error post refresh /////////'+err);
-			console.log('00000000000000000 body 000000000000000000000000000');
-            console.log(body);
-			console.log('--------------------------------------------');
             console.log(response);
             console.log('000000000000000000000 response 00000000000000000000000');
 			console.log(url);
