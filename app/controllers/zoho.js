@@ -237,15 +237,15 @@ exports.authRefresh = function(req, res, next){
         request.post(url,  function(err, body, response){
             if(err) console.error('////// error post refresh /////////'+err);
             console.log(response);
-			console.log(typeof response);
+			var resParse = JSON.parse(response)
             console.log('000000000000000000000 response 00000000000000000000000');
             
-        console.log(response.access_token);
-		console.log(response.refresh_token);
+        console.log(resParse.access_token);
+		console.log(resParse.refresh_token);
 
             if(response){
-                admin.accessTokenZoho = response.access_token;
-                admin.refreshTokenZoho = response.refresh_token;
+                admin.accessTokenZoho = resParse.access_token;
+                admin.refreshTokenZoho = resParse.refresh_token;
                 admin.save(function(err){
                     if(err)console.error(err);            
                 })
